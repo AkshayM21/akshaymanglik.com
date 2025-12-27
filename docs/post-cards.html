@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Cards</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --color-bg: #FAF8F5;
+  --color-card: #FFFFFF;
+  --color-border: #1A1A1A;
+  --color-accent: #DC2626;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #4A4A4A;
+  --color-text-muted: #6B6B6B;
+
+  --font-display: 'Literata', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+
+  --border: 1px solid var(--color-border);
+  --shadow: 3px 3px 0 var(--color-border);
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding: 2rem;
+}
+
+.card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--color-card);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: var(--border);
+}
+
+.nav__logo {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.nav__links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav__links a {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.post-cards {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.post-card {
+  background: var(--color-card);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.post-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow);
+}
+
+.post-card__meta {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.post-card__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 0.5rem;
+}
+
+.post-card__title a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.post-card:hover .post-card__title a {
+  color: var(--color-accent);
+}
+
+.post-card__excerpt {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.footer {
+  padding: 1rem 1.5rem;
+  border-top: var(--border);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <nav class="nav">
+      <a href="#" class="nav__logo">dereferenced</a>
+      <div class="nav__links">
+        <a href="#">writing</a>
+        <a href="#">about</a>
+      </div>
+    </nav>
+    <div class="post-cards">
+      <article class="post-card">
+        <div class="post-card__meta">December 2025 · Machine Learning</div>
+        <h2 class="post-card__title"><a href="#">The Geometry of Attention</a></h2>
+        <p class="post-card__excerpt">A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio.</p>
+      </article>
+      <article class="post-card">
+        <div class="post-card__meta">November 2025 · Reinforcement Learning</div>
+        <h2 class="post-card__title"><a href="#">Understanding GRPO</a></h2>
+        <p class="post-card__excerpt">Group Relative Policy Optimization eliminates the learned value function. Here's why that matters.</p>
+      </article>
+      <article class="post-card">
+        <div class="post-card__meta">October 2025 · Systems</div>
+        <h2 class="post-card__title"><a href="#">Batch Invariance in Matrix Kernels</a></h2>
+        <p class="post-card__excerpt">Exploring why certain CUDA kernel implementations maintain consistent performance regardless of batch size.</p>
+      </article>
+    </div>
+    <footer class="footer">© 2025 · Built with Astro</footer>
+  </div>
+</body>
+</html>

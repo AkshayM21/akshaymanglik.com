@@ -1,0 +1,188 @@
+---
+interface Props {
+  url?: string;
+  pageId?: string;
+}
+
+const { url = Astro.url.href, pageId = Astro.url.pathname } = Astro.props;
+
+// Configure these values for your Remark42 instance
+const REMARK42_HOST = import.meta.env.PUBLIC_REMARK42_HOST || 'https://comments.akshaymanglik.com';
+const REMARK42_SITE_ID = import.meta.env.PUBLIC_REMARK42_SITE_ID || 'dereferenced';
+---
+
+<section class="comments" id="comments">
+  <h2 class="comments__title">Comments</h2>
+  <div id="remark42"></div>
+</section>
+
+<script define:vars={{ REMARK42_HOST, REMARK42_SITE_ID, url, pageId }}>
+  // Remark42 configuration
+  window.remark_config = {
+    host: REMARK42_HOST,
+    site_id: REMARK42_SITE_ID,
+    url: url,
+    page_title: document.title,
+    theme: 'light',
+    locale: 'en',
+    show_email_subscription: false,
+    simple_view: false,
+    no_footer: false,
+  };
+
+  // Load Remark42 script
+  (function() {
+    const d = document;
+    const s = d.createElement('script');
+    s.src = `${REMARK42_HOST}/web/embed.js`;
+    s.defer = true;
+    s.async = true;
+    d.head.appendChild(s);
+
+    // Apply custom styles via MutationObserver when iframe loads
+    const injectStyles = () => {
+      const customCSS = `
+        /* Custom Remark42 styles to match Dereferenced design */
+        :root {
+          --font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          --color-primary: #DC2626 !important;
+          --color-hover: #B91C1C !important;
+        }
+
+        body {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .auth-panel,
+        .comment,
+        .comment__input {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .comment {
+          border-left: 2px solid #E5E5E5 !important;
+          border-radius: 0 !important;
+        }
+
+        .comment:hover {
+          border-left-color: #DC2626 !important;
+        }
+
+        .comment__text {
+          font-size: 15px !important;
+          line-height: 1.6 !important;
+          color: #4A4A4A !important;
+        }
+
+        .comment__input textarea {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+          font-size: 15px !important;
+          border: 1px solid #1A1A1A !important;
+          border-radius: 10px !important;
+        }
+
+        .comment__input textarea:focus {
+          border-color: #DC2626 !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+
+        .comment__action,
+        .comment__action-link {
+          color: #6B6B6B !important;
+        }
+
+        .comment__action:hover,
+        .comment__action-link:hover {
+          color: #DC2626 !important;
+        }
+
+        button.auth-panel__submit,
+        button[type="submit"] {
+          background: #DC2626 !important;
+          border: 1px solid #1A1A1A !important;
+          border-radius: 6px !important;
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+          font-weight: 500 !important;
+          transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+        }
+
+        button.auth-panel__submit:hover,
+        button[type="submit"]:hover {
+          transform: translate(-2px, -2px) !important;
+          box-shadow: 3px 3px 0 #1A1A1A !important;
+        }
+
+        .auth-panel__provider-name {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .auth-panel__user-id {
+          color: #4A4A4A !important;
+        }
+
+        a {
+          color: #DC2626 !important;
+        }
+
+        a:hover {
+          color: #B91C1C !important;
+        }
+      `;
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.tagName === 'IFRAME' && node.id && node.id.startsWith('remark42')) {
+              node.addEventListener('load', () => {
+                try {
+                  const iframeDoc = node.contentDocument || node.contentWindow.document;
+                  if (iframeDoc) {
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = customCSS;
+                    iframeDoc.head.appendChild(style);
+                  }
+                } catch (e) {
+                  // Cross-origin restrictions may prevent this
+                  console.log('Could not inject custom styles into Remark42 iframe');
+                }
+              });
+            }
+          });
+        });
+      });
+
+      observer.observe(document.getElementById('remark42'), {
+        childList: true,
+        subtree: true
+      });
+    };
+
+    // Start observing when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectStyles);
+    } else {
+      injectStyles();
+    }
+  })();
+</script>
+
+<style>
+  .comments {
+    margin-top: var(--space-12);
+    padding-top: var(--space-8);
+    border-top: 1px dashed var(--color-divider);
+  }
+
+  .comments__title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-6);
+  }
+
+  #remark42 {
+    min-height: 200px;
+  }
+</style>

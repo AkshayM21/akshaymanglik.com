@@ -1,0 +1,74 @@
+---
+interface FootnoteItem {
+  id: string;
+  content: string;
+}
+
+interface Props {
+  footnotes: FootnoteItem[];
+}
+
+const { footnotes } = Astro.props;
+---
+
+{footnotes.length > 0 && (
+  <section class="footnotes-section" role="doc-endnotes">
+    <hr class="footnotes-divider" />
+    <h2 class="footnotes-title">Footnotes</h2>
+    <ol class="footnotes-list">
+      {footnotes.map((fn) => (
+        <li id={`fn-${fn.id}`} class="footnote-item">
+          <span set:html={fn.content} />
+          <a
+            href={`#fnref-${fn.id}`}
+            class="footnote-backref"
+            role="doc-backlink"
+            aria-label="Back to reference"
+          >↩</a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+<style>
+  .footnotes-section {
+    margin-top: var(--space-12);
+  }
+
+  .footnotes-divider {
+    border: none;
+    border-top: 1px dashed var(--color-divider);
+    margin-bottom: var(--space-6);
+  }
+
+  .footnotes-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .footnotes-list {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    padding-left: var(--space-6);
+  }
+
+  .footnote-item {
+    margin-bottom: var(--space-3);
+  }
+
+  .footnote-backref {
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-left: var(--space-2);
+    font-size: 0.85em;
+  }
+
+  .footnote-backref:hover {
+    text-decoration: underline;
+  }
+</style>

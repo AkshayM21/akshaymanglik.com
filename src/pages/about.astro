@@ -1,0 +1,126 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/global/Header.astro';
+import Footer from '@/components/global/Footer.astro';
+import Card from '@/components/global/Card.astro';
+---
+
+<BaseLayout title="About — Akshay Manglik" description="Applied AI Engineer at Scale AI. Columbia grad. Writing about technology, politics, and economics.">
+  <div class="page">
+    <div class="container">
+      <Card>
+        <Header currentPath="/about" />
+        <article class="article">
+          <header class="article__header">
+            <h1 class="article__title">About</h1>
+          </header>
+          <div class="prose">
+            <div class="about-intro">
+              <img
+                src="/assets/profile-pics/pfp.jpeg"
+                alt="Akshay Manglik"
+                class="about-photo"
+              />
+              <div class="about-text">
+                <p>
+                  I'm <strong>Akshay Manglik</strong>, an Applied AI Engineer at <a href="https://scale.com" target="_blank" rel="noopener">Scale AI</a>.
+                </p>
+                <p>
+                  I graduated from Columbia University in 2025 with a B.A. in Computer Science and Economics, and a minor in Mathematics.
+                </p>
+              </div>
+            </div>
+
+            <p>
+              <strong>Dereferenced</strong> is my blog about technology, politics, and economics—exploring how these domains intersect and shape our world. The name comes from the pointer dereference operator in C, reflecting my interest in getting to the underlying substance of ideas.
+            </p>
+
+            <h2>Connect</h2>
+            <div class="connect-links">
+              <a href="https://twitter.com/akshay_manglik" target="_blank" rel="noopener" class="connect-link">
+                Twitter / X
+              </a>
+              <a href="https://www.linkedin.com/in/akshay-manglik/" target="_blank" rel="noopener" class="connect-link">
+                LinkedIn
+              </a>
+              <a href="https://github.com/AkshayM21" target="_blank" rel="noopener" class="connect-link">
+                GitHub
+              </a>
+              <a href="/assets/cv/cv_web.pdf" target="_blank" class="connect-link">
+                Resume
+              </a>
+            </div>
+          </div>
+        </article>
+        <Footer />
+      </Card>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-intro {
+    display: flex;
+    gap: var(--space-6);
+    align-items: flex-start;
+    margin-bottom: var(--space-6);
+  }
+
+  .about-photo {
+    width: 140px;
+    height: 140px;
+    border-radius: var(--radius-md);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .about-text {
+    flex: 1;
+  }
+
+  .about-text p {
+    margin-bottom: var(--space-3);
+  }
+
+  .about-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .connect-links {
+    display: flex;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+
+  .connect-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .connect-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .about-intro {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .about-photo {
+      width: 120px;
+      height: 120px;
+    }
+
+    .connect-links {
+      justify-content: center;
+    }
+  }
+</style>

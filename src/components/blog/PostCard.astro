@@ -1,0 +1,39 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  category?: string;
+  slug: string;
+}
+
+const { title, description, pubDate, category, slug } = Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+});
+---
+
+<article class="post-card">
+  <div class="post-card__meta">
+    {formattedDate}{category && ` · ${category}`}
+  </div>
+  <h2 class="post-card__title">
+    <a href={`/dereferenced/${slug}`}>{title}</a>
+  </h2>
+  <p class="post-card__excerpt">{description}</p>
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+  }
+
+  /* Make entire card clickable via link overlay */
+  .post-card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+</style>

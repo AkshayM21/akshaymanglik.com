@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.16.6"><!-- Primary Meta Tags --><title>Understanding GRPO — Dereferenced</title><meta name="title" content="Understanding GRPO — Dereferenced"><meta name="description" content="Group Relative Policy Optimization eliminates the learned value function. Here's why that matters for RL training."><link rel="canonical" href="https://akshaymanglik.com/dereferenced/understanding-grpo/"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://akshaymanglik.com/dereferenced/understanding-grpo/"><meta property="og:title" content="Understanding GRPO — Dereferenced"><meta property="og:description" content="Group Relative Policy Optimization eliminates the learned value function. Here's why that matters for RL training."><meta property="og:image" content="https://akshaymanglik.com/og/understanding-grpo.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://akshaymanglik.com/dereferenced/understanding-grpo/"><meta property="twitter:title" content="Understanding GRPO — Dereferenced"><meta property="twitter:description" content="Group Relative Policy Optimization eliminates the learned value function. Here's why that matters for RL training."><meta property="twitter:image" content="https://akshaymanglik.com/og/understanding-grpo.png"><!-- Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet"><!-- KaTeX CSS --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous"><link rel="stylesheet" href="/_astro/_slug_.CDOXZz3C.css">
+<style>.comments[data-astro-cid-kjo32iow]{margin-top:var(--space-12);padding-top:var(--space-8);border-top:1px dashed var(--color-divider)}.comments__title[data-astro-cid-kjo32iow]{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;color:var(--color-text-primary);margin-bottom:var(--space-6)}#remark42[data-astro-cid-kjo32iow]{min-height:200px}.container--article[data-astro-cid-4dqtj3le]{max-width:var(--article-container-width)}.toc-mobile[data-astro-cid-4dqtj3le]{margin-bottom:var(--space-6);padding:var(--space-4) var(--space-5);background:var(--color-callout-bg);border:var(--border);border-radius:var(--radius-md)}.toc-mobile__details[data-astro-cid-4dqtj3le]{margin:0}.toc-mobile__summary[data-astro-cid-4dqtj3le]{font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-text-primary);cursor:pointer;list-style:none;display:flex;align-items:center;gap:var(--space-2)}.toc-mobile__summary[data-astro-cid-4dqtj3le]::-webkit-details-marker{display:none}.toc-mobile__summary[data-astro-cid-4dqtj3le]:before{content:"▸";font-size:.75em;transition:transform .15s ease}.toc-mobile__details[data-astro-cid-4dqtj3le][open] .toc-mobile__summary[data-astro-cid-4dqtj3le]:before{transform:rotate(90deg)}.toc-mobile__list[data-astro-cid-4dqtj3le]{list-style:none;padding:0;margin:var(--space-3) 0 0 0}.toc-mobile__item[data-astro-cid-4dqtj3le]{margin-bottom:var(--space-2)}.toc-mobile__item--h3[data-astro-cid-4dqtj3le]{padding-left:var(--space-4)}.toc-mobile__link[data-astro-cid-4dqtj3le]{font-size:var(--text-sm);color:var(--color-text-secondary);text-decoration:none;transition:color .15s ease}.toc-mobile__link[data-astro-cid-4dqtj3le]:hover{color:var(--color-text-primary)}@media(min-width:768px){.toc-mobile[data-astro-cid-4dqtj3le]{display:none}}
+</style><script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+		var script = document.createElement('script');
+		script.defer = true;
+		script.src = '/_vercel/insights/script.js';
+		var head = document.querySelector('head');
+		head.appendChild(script);
+	</script></head> <body>  <div class="page" data-astro-cid-4dqtj3le> <div class="container container--article" data-astro-cid-4dqtj3le> <div class="card card--article">  <nav class="nav" id="main-nav"> <a href="/dereferenced" class="nav__logo"> <span class="nav__logo-text">dereferenced</span> <span class="nav__logo-symbol">*</span> </a> <div class="nav__links"> <a href="/dereferenced" class="nav__link nav__link--active">
+writing
+</a> <a href="/about" class="nav__link">
+about
+</a> </div> </nav> <script type="module">const e=document.getElementById("main-nav");function l(){window.scrollY>50?e?.classList.add("nav--scrolled"):e?.classList.remove("nav--scrolled")}l();window.addEventListener("scroll",l,{passive:!0});</script> <article class="article-layout" data-astro-cid-4dqtj3le> <header class="article__header" data-astro-cid-4dqtj3le> <div class="article__meta" data-astro-cid-4dqtj3le> November 14, 2025 · Reinforcement Learning · 2 min read
+</div> <h1 class="article__title" data-astro-cid-4dqtj3le>Understanding GRPO</h1> </header>  <nav class="toc-mobile" aria-label="Table of contents" data-astro-cid-4dqtj3le> <details class="toc-mobile__details" data-astro-cid-4dqtj3le> <summary class="toc-mobile__summary" data-astro-cid-4dqtj3le>Contents</summary> <ul class="toc-mobile__list" data-astro-cid-4dqtj3le> <li class="toc-mobile__item toc-mobile__item--h2" data-astro-cid-4dqtj3le> <a href="#the-problem-with-traditional-rl" class="toc-mobile__link" data-astro-cid-4dqtj3le>The Problem with Traditional RL</a> </li><li class="toc-mobile__item toc-mobile__item--h2" data-astro-cid-4dqtj3le> <a href="#grpos-solution" class="toc-mobile__link" data-astro-cid-4dqtj3le>GRPO’s Solution</a> </li><li class="toc-mobile__item toc-mobile__item--h2" data-astro-cid-4dqtj3le> <a href="#implications-for-llm-training" class="toc-mobile__link" data-astro-cid-4dqtj3le>Implications for LLM Training</a> </li> </ul> </details> </nav> <div class="prose" data-astro-cid-4dqtj3le>  <p>Group Relative Policy Optimization (GRPO) represents a significant simplification in how we train language models with reinforcement learning. The key insight? We don’t actually need a learned value function.</p>
+<h2 id="the-problem-with-traditional-rl">The Problem with Traditional RL</h2>
+<p>In standard policy gradient methods like PPO, we maintain two neural networks:</p>
+<ol>
+<li><strong>Policy network</strong>: Decides what action to take</li>
+<li><strong>Value network</strong>: Estimates expected future reward</li>
+</ol>
+<p>The value network is used to compute advantages—how much better an action was compared to what we expected. But this introduces challenges:</p>
+<ul>
+<li>Training instability from two competing objectives</li>
+<li>Increased memory and compute requirements</li>
+<li>Potential for value estimation errors to corrupt policy updates</li>
+</ul>
+<h2 id="grpos-solution">GRPO’s Solution</h2>
+<p>GRPO sidesteps the value function entirely by using <strong>group-relative baselines</strong>. Instead of asking “how much better was this action than expected?”, it asks “how much better was this response than the others in this batch?”</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Simplified GRPO advantage computation</span></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> compute_grpo_advantages</span><span style="color:#24292E">(rewards, group_size):</span></span>
+<span class="line"><span style="color:#6A737D">    # Reshape into groups</span></span>
+<span class="line"><span style="color:#24292E">    grouped </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rewards.reshape(</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">, group_size)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Subtract group mean (the baseline)</span></span>
+<span class="line"><span style="color:#24292E">    group_means </span><span style="color:#D73A49">=</span><span style="color:#24292E"> grouped.mean(</span><span style="color:#E36209">dim</span><span style="color:#D73A49">=-</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#E36209">keepdim</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    advantages </span><span style="color:#D73A49">=</span><span style="color:#24292E"> grouped </span><span style="color:#D73A49">-</span><span style="color:#24292E"> group_means</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> advantages.flatten()</span></span></code></pre>
+<p>This is elegant for several reasons:</p>
+<ol>
+<li><strong>No learned component</strong>: The baseline is a simple statistic</li>
+<li><strong>Automatic scaling</strong>: Advantages are always relative to the batch</li>
+<li><strong>Reduced variance</strong>: Comparing within groups controls for prompt difficulty</li>
+</ol>
+<h2 id="implications-for-llm-training">Implications for LLM Training</h2>
+<p>For language model fine-tuning, GRPO means we can:</p>
+<ul>
+<li>Run more experiments with the same compute budget</li>
+<li>Avoid value head initialization issues</li>
+<li>Simplify the training loop significantly</li>
+</ul>
+<p>The tradeoff is that we need multiple completions per prompt, but for LLM training this is often desirable anyway for diversity.</p>  </div>  <section class="footnotes-section" id="footnotes-container" role="doc-endnotes" data-astro-cid-4dqtj3le></section> <section class="comments" id="comments" data-astro-cid-kjo32iow> <h2 class="comments__title" data-astro-cid-kjo32iow>Comments</h2> <div id="remark42" data-astro-cid-kjo32iow></div> </section> <script>(function(){const REMARK42_HOST = "https://comments.akshaymanglik.com";
+const REMARK42_SITE_ID = "dereferenced";
+const url = "https://akshaymanglik.com/dereferenced/understanding-grpo/";
+const pageId = "/dereferenced/understanding-grpo/";
+
+  // Remark42 configuration
+  window.remark_config = {
+    host: REMARK42_HOST,
+    site_id: REMARK42_SITE_ID,
+    url: url,
+    page_title: document.title,
+    theme: 'light',
+    locale: 'en',
+    show_email_subscription: false,
+    simple_view: false,
+    no_footer: false,
+  };
+
+  // Load Remark42 script
+  (function() {
+    const d = document;
+    const s = d.createElement('script');
+    s.src = `${REMARK42_HOST}/web/embed.js`;
+    s.defer = true;
+    s.async = true;
+    d.head.appendChild(s);
+
+    // Apply custom styles via MutationObserver when iframe loads
+    const injectStyles = () => {
+      const customCSS = `
+        /* Custom Remark42 styles to match Dereferenced design */
+        :root {
+          --font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          --color-primary: #DC2626 !important;
+          --color-hover: #B91C1C !important;
+        }
+
+        body {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .auth-panel,
+        .comment,
+        .comment__input {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .comment {
+          border-left: 2px solid #E5E5E5 !important;
+          border-radius: 0 !important;
+        }
+
+        .comment:hover {
+          border-left-color: #DC2626 !important;
+        }
+
+        .comment__text {
+          font-size: 15px !important;
+          line-height: 1.6 !important;
+          color: #4A4A4A !important;
+        }
+
+        .comment__input textarea {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+          font-size: 15px !important;
+          border: 1px solid #1A1A1A !important;
+          border-radius: 10px !important;
+        }
+
+        .comment__input textarea:focus {
+          border-color: #DC2626 !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+
+        .comment__action,
+        .comment__action-link {
+          color: #6B6B6B !important;
+        }
+
+        .comment__action:hover,
+        .comment__action-link:hover {
+          color: #DC2626 !important;
+        }
+
+        button.auth-panel__submit,
+        button[type="submit"] {
+          background: #DC2626 !important;
+          border: 1px solid #1A1A1A !important;
+          border-radius: 6px !important;
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+          font-weight: 500 !important;
+          transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+        }
+
+        button.auth-panel__submit:hover,
+        button[type="submit"]:hover {
+          transform: translate(-2px, -2px) !important;
+          box-shadow: 3px 3px 0 #1A1A1A !important;
+        }
+
+        .auth-panel__provider-name {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .auth-panel__user-id {
+          color: #4A4A4A !important;
+        }
+
+        a {
+          color: #DC2626 !important;
+        }
+
+        a:hover {
+          color: #B91C1C !important;
+        }
+      `;
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.tagName === 'IFRAME' && node.id && node.id.startsWith('remark42')) {
+              node.addEventListener('load', () => {
+                try {
+                  const iframeDoc = node.contentDocument || node.contentWindow.document;
+                  if (iframeDoc) {
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = customCSS;
+                    iframeDoc.head.appendChild(style);
+                  }
+                } catch (e) {
+                  // Cross-origin restrictions may prevent this
+                  console.log('Could not inject custom styles into Remark42 iframe');
+                }
+              });
+            }
+          });
+        });
+      });
+
+      observer.observe(document.getElementById('remark42'), {
+        childList: true,
+        subtree: true
+      });
+    };
+
+    // Start observing when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectStyles);
+    } else {
+      injectStyles();
+    }
+  })();
+})();</script>   <nav class="toc-sidebar" aria-label="Table of contents" data-astro-cid-4dqtj3le> <div class="toc-sidebar__title" data-astro-cid-4dqtj3le>Contents</div> <ul class="toc-sidebar__list" data-astro-cid-4dqtj3le> <li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#the-problem-with-traditional-rl" class="toc-sidebar__link" data-astro-cid-4dqtj3le>The Problem with Traditional RL</a> </li><li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#grpos-solution" class="toc-sidebar__link" data-astro-cid-4dqtj3le>GRPO’s Solution</a> </li><li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#implications-for-llm-training" class="toc-sidebar__link" data-astro-cid-4dqtj3le>Implications for LLM Training</a> </li> </ul> </nav> </article> <footer class="footer"> <p class="footer__text">
+© 2025 · Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> </p> </footer>  </div> </div> </div>  </body></html> <script type="module">function c(){const o=document.querySelectorAll(".toc-sidebar__link"),r=document.querySelectorAll("h2[id], h3[id]");if(o.length===0||r.length===0)return;const s=new IntersectionObserver(n=>{const e=n.filter(t=>t.isIntersecting).sort((t,i)=>t.boundingClientRect.top-i.boundingClientRect.top);if(e.length>0){const t=e[0].target.id;o.forEach(i=>i.classList.remove("toc-sidebar__link--active")),document.querySelector(`.toc-sidebar__link[href="#${t}"]`)?.classList.add("toc-sidebar__link--active")}},{rootMargin:"-10% 0% -70% 0%",threshold:0});r.forEach(n=>s.observe(n))}function l(){const o=document.getElementById("footnotes-container"),r=document.querySelectorAll("[data-footnote-id]");if(!o)return;if(r.length===0){o.remove();return}const s=Array.from(r).map(e=>{const t=e.dataset.footnoteId,i=e.querySelector("[data-footnote-content]")?.innerHTML||"";return{id:t,content:i}}),n=[...new Map(s.map(e=>[e.id,e])).values()];n.sort((e,t)=>parseInt(e.id||"0")-parseInt(t.id||"0")),n.length>0?o.innerHTML=`
+        <hr class="footnotes-divider" />
+        <h2 class="footnotes-title">Footnotes</h2>
+        <ol class="footnotes-list">
+          ${n.map(e=>`
+            <li id="fn-${e.id}" class="footnote-item">
+              ${e.content}
+              <a href="#fnref-${e.id}" class="footnote-backref" aria-label="Back to reference">↩</a>
+            </li>
+          `).join("")}
+        </ol>
+      `:o.remove()}c();l();document.addEventListener("astro:page-load",()=>{c(),l()});</script> 

@@ -1,0 +1,257 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '@/components/global/Header.astro';
+import Footer from '@/components/global/Footer.astro';
+import Card from '@/components/global/Card.astro';
+import Remark42 from '@/components/comments/Remark42.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  category?: string;
+  heroImage?: string;
+  headings?: Heading[];
+}
+
+const { title, description, pubDate, updatedDate, category, heroImage, headings = [] } = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Calculate reading time (rough estimate: 200 words per minute)
+const content = await Astro.slots.render('default');
+const wordCount = content.split(/\s+/).length;
+const readingTime = Math.ceil(wordCount / 200);
+
+// Filter headings for TOC (h2 and h3 only)
+const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
+const showTOC = tocHeadings.length > 2;
+---
+
+<BaseLayout title={`${title} — Dereferenced`} description={description} image={heroImage}>
+  <div class="page">
+    <div class="container container--article">
+      <Card class="card--article">
+        <Header currentPath="/dereferenced" />
+        <article class="article-layout">
+          <header class="article__header">
+            <div class="article__meta">
+              {formattedPubDate}{category && ` · ${category}`} · {readingTime} min read
+            </div>
+            <h1 class="article__title">{title}</h1>
+          </header>
+
+          {/* Mobile TOC - shown above content on small screens */}
+          {showTOC && (
+            <nav class="toc-mobile" aria-label="Table of contents">
+              <details class="toc-mobile__details">
+                <summary class="toc-mobile__summary">Contents</summary>
+                <ul class="toc-mobile__list">
+                  {tocHeadings.map(h => (
+                    <li class={`toc-mobile__item toc-mobile__item--h${h.depth}`}>
+                      <a href={`#${h.slug}`} class="toc-mobile__link">{h.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </nav>
+          )}
+
+          <div class="prose">
+            <slot />
+          </div>
+
+          {/* Footnotes container - populated by JS */}
+          <section class="footnotes-section" id="footnotes-container" role="doc-endnotes">
+          </section>
+
+          <Remark42 />
+
+          {/* Sidebar TOC - sticky on desktop */}
+          {showTOC && (
+            <nav class="toc-sidebar" aria-label="Table of contents">
+              <div class="toc-sidebar__title">Contents</div>
+              <ul class="toc-sidebar__list">
+                {tocHeadings.map(h => (
+                  <li class={`toc-sidebar__item toc-sidebar__item--h${h.depth}`}>
+                    <a href={`#${h.slug}`} class="toc-sidebar__link">{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </article>
+        <Footer />
+      </Card>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  function initScrollSpy() {
+    const links = document.querySelectorAll('.toc-sidebar__link');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+
+    if (links.length === 0 || headings.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find intersecting entries sorted by their position on page
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length > 0) {
+          // Highlight the topmost visible heading
+          const id = visible[0].target.id;
+          links.forEach(link => link.classList.remove('toc-sidebar__link--active'));
+          document.querySelector(`.toc-sidebar__link[href="#${id}"]`)?.classList.add('toc-sidebar__link--active');
+        }
+      },
+      { rootMargin: '-10% 0% -70% 0%', threshold: 0 }
+    );
+
+    headings.forEach(h => observer.observe(h));
+  }
+
+  function collectFootnotes() {
+    const container = document.getElementById('footnotes-container');
+    const footnotes = document.querySelectorAll('[data-footnote-id]');
+
+    if (!container) return;
+
+    if (footnotes.length === 0) {
+      container.remove();
+      return;
+    }
+
+    // Build footnotes list from data attributes
+    const items = Array.from(footnotes).map(fn => {
+      const id = (fn as HTMLElement).dataset.footnoteId;
+      const content = fn.querySelector('[data-footnote-content]')?.innerHTML || '';
+      return { id, content };
+    });
+
+    // Remove duplicates (same id)
+    const unique = [...new Map(items.map(i => [i.id, i])).values()];
+
+    // Sort by id numerically
+    unique.sort((a, b) => parseInt(a.id || '0') - parseInt(b.id || '0'));
+
+    // Render if we have footnotes
+    if (unique.length > 0) {
+      container.innerHTML = `
+        <hr class="footnotes-divider" />
+        <h2 class="footnotes-title">Footnotes</h2>
+        <ol class="footnotes-list">
+          ${unique.map(fn => `
+            <li id="fn-${fn.id}" class="footnote-item">
+              ${fn.content}
+              <a href="#fnref-${fn.id}" class="footnote-backref" aria-label="Back to reference">↩</a>
+            </li>
+          `).join('')}
+        </ol>
+      `;
+    } else {
+      container.remove();
+    }
+  }
+
+  // Initialize on page load
+  initScrollSpy();
+  collectFootnotes();
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    initScrollSpy();
+    collectFootnotes();
+  });
+</script>
+
+<style>
+  .container--article {
+    max-width: var(--article-container-width);
+  }
+
+  /* Mobile TOC styles */
+  .toc-mobile {
+    margin-bottom: var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-callout-bg);
+    border: var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .toc-mobile__details {
+    margin: 0;
+  }
+
+  .toc-mobile__summary {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .toc-mobile__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-mobile__summary::before {
+    content: '▸';
+    font-size: 0.75em;
+    transition: transform 0.15s ease;
+  }
+
+  .toc-mobile__details[open] .toc-mobile__summary::before {
+    transform: rotate(90deg);
+  }
+
+  .toc-mobile__list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0 0;
+  }
+
+  .toc-mobile__item {
+    margin-bottom: var(--space-2);
+  }
+
+  .toc-mobile__item--h3 {
+    padding-left: var(--space-4);
+  }
+
+  .toc-mobile__link {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .toc-mobile__link:hover {
+    color: var(--color-text-primary);
+  }
+
+  /* Hide mobile TOC on desktop */
+  @media (min-width: 768px) {
+    .toc-mobile {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '' } = Astro.props;
+---
+
+<nav class="nav" id="main-nav">
+  <a href="/dereferenced" class="nav__logo">
+    <span class="nav__logo-text">dereferenced</span>
+    <span class="nav__logo-symbol">*</span>
+  </a>
+  <div class="nav__links">
+    <a
+      href="/dereferenced"
+      class:list={["nav__link", { "nav__link--active": currentPath.includes('/dereferenced') || currentPath === '/' }]}
+    >
+      writing
+    </a>
+    <a
+      href="/about"
+      class:list={["nav__link", { "nav__link--active": currentPath === '/about' }]}
+    >
+      about
+    </a>
+  </div>
+</nav>
+
+<script>
+  // Logo scroll behavior: dereferenced → * when scrolled past 50px
+  const nav = document.getElementById('main-nav');
+
+  function handleScroll() {
+    if (window.scrollY > 50) {
+      nav?.classList.add('nav--scrolled');
+    } else {
+      nav?.classList.remove('nav--scrolled');
+    }
+  }
+
+  // Initial check
+  handleScroll();
+
+  // Listen for scroll
+  window.addEventListener('scroll', handleScroll, { passive: true });
+</script>
