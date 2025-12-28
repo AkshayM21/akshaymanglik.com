@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.16.6"><!-- Primary Meta Tags --><title>The Geometry of Attention — Dereferenced</title><meta name="title" content="The Geometry of Attention — Dereferenced"><meta name="description" content="A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio."><link rel="canonical" href="https://akshaymanglik.com/dereferenced/geometry-of-attention/"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://akshaymanglik.com/dereferenced/geometry-of-attention/"><meta property="og:title" content="The Geometry of Attention — Dereferenced"><meta property="og:description" content="A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio."><meta property="og:image" content="https://akshaymanglik.com/og/geometry-of-attention.png"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://akshaymanglik.com/dereferenced/geometry-of-attention/"><meta property="twitter:title" content="The Geometry of Attention — Dereferenced"><meta property="twitter:description" content="A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio."><meta property="twitter:image" content="https://akshaymanglik.com/og/geometry-of-attention.png"><!-- Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet"><!-- KaTeX CSS --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous"><link rel="stylesheet" href="/_astro/_slug_.BS4uyNFU.css">
+<style>.comments[data-astro-cid-kjo32iow]{margin-top:var(--space-12);padding-top:var(--space-8);border-top:1px dashed var(--color-divider)}.comments__title[data-astro-cid-kjo32iow]{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:600;color:var(--color-text-primary);margin-bottom:var(--space-6)}#remark42[data-astro-cid-kjo32iow]{min-height:200px}.container--article[data-astro-cid-4dqtj3le]{max-width:var(--article-container-width)}.toc-mobile[data-astro-cid-4dqtj3le]{margin-bottom:var(--space-6);padding:var(--space-4) var(--space-5);background:var(--color-callout-bg);border:var(--border);border-radius:var(--radius-md)}.toc-mobile__details[data-astro-cid-4dqtj3le]{margin:0}.toc-mobile__summary[data-astro-cid-4dqtj3le]{font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-text-primary);cursor:pointer;list-style:none;display:flex;align-items:center;gap:var(--space-2)}.toc-mobile__summary[data-astro-cid-4dqtj3le]::-webkit-details-marker{display:none}.toc-mobile__summary[data-astro-cid-4dqtj3le]:before{content:"▸";font-size:.75em;transition:transform .15s ease}.toc-mobile__details[data-astro-cid-4dqtj3le][open] .toc-mobile__summary[data-astro-cid-4dqtj3le]:before{transform:rotate(90deg)}.toc-mobile__list[data-astro-cid-4dqtj3le]{list-style:none;padding:0;margin:var(--space-3) 0 0 0}.toc-mobile__item[data-astro-cid-4dqtj3le]{margin-bottom:var(--space-2)}.toc-mobile__item--h3[data-astro-cid-4dqtj3le]{padding-left:var(--space-4)}.toc-mobile__link[data-astro-cid-4dqtj3le]{font-size:var(--text-sm);color:var(--color-text-secondary);text-decoration:none;transition:color .15s ease}.toc-mobile__link[data-astro-cid-4dqtj3le]:hover{color:var(--color-text-primary)}@media(min-width:768px){.toc-mobile[data-astro-cid-4dqtj3le]{display:none}}
+.newsletter-card[data-astro-cid-drk4da3y]{background:var(--color-newsletter-bg);border:var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);padding:1.5rem;margin-top:var(--space-8)}.newsletter-card__title[data-astro-cid-drk4da3y]{font-family:var(--font-display);font-size:1.25rem;font-weight:600;margin-bottom:.5rem}.newsletter-card__desc[data-astro-cid-drk4da3y]{font-size:.9rem;color:var(--color-text-secondary);margin-bottom:1rem;line-height:1.5}.newsletter-card__form[data-astro-cid-drk4da3y]{display:flex;gap:.75rem}.newsletter-card__input[data-astro-cid-drk4da3y]{flex:1;padding:.625rem .875rem;font-size:.9rem;font-family:var(--font-body);border:var(--border);border-radius:6px;background:var(--color-card)}.newsletter-card__input--name[data-astro-cid-drk4da3y]{flex:.7}.newsletter-card__input[data-astro-cid-drk4da3y]:focus{outline:none;box-shadow:0 0 0 2px var(--color-accent)}.newsletter-card__btn[data-astro-cid-drk4da3y]{padding:.625rem 1.25rem;font-size:.875rem;font-weight:500;background:var(--color-accent);color:#fff;border:var(--border);border-radius:6px;cursor:pointer;transition:transform .1s ease,box-shadow .1s ease;white-space:nowrap}.newsletter-card__btn[data-astro-cid-drk4da3y]:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}.newsletter-card__btn[data-astro-cid-drk4da3y]:disabled{opacity:.7;cursor:not-allowed;transform:none;box-shadow:none}@media(max-width:640px){.newsletter-card__form[data-astro-cid-drk4da3y]{flex-direction:column}.newsletter-card__input--name[data-astro-cid-drk4da3y]{flex:1}.newsletter-card__btn[data-astro-cid-drk4da3y]{width:100%}}.newsletter-card--listing[data-astro-cid-drk4da3y]{margin-top:0;padding:var(--space-5) var(--space-6)}.newsletter-card--listing[data-astro-cid-drk4da3y] .newsletter-card__title[data-astro-cid-drk4da3y]{font-size:var(--text-xl)}.newsletter-card--listing[data-astro-cid-drk4da3y] .newsletter-card__desc[data-astro-cid-drk4da3y]{font-size:var(--text-sm);margin-bottom:var(--space-4)}.newsletter-card--listing[data-astro-cid-drk4da3y] .newsletter-card__input[data-astro-cid-drk4da3y],.newsletter-card--listing[data-astro-cid-drk4da3y] .newsletter-card__btn[data-astro-cid-drk4da3y]{padding:.5rem .75rem;font-size:var(--text-sm)}
+</style><script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+		var script = document.createElement('script');
+		script.defer = true;
+		script.src = '/_vercel/insights/script.js';
+		var head = document.querySelector('head');
+		head.appendChild(script);
+	</script><style>.acknowledgements[data-astro-cid-6hemjc7f]{margin-bottom:var(--space-8)}.acknowledgements__title[data-astro-cid-6hemjc7f]{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;margin-bottom:var(--space-4);color:var(--color-text-primary)}.acknowledgements__content[data-astro-cid-6hemjc7f]{font-size:var(--text-sm);line-height:var(--leading-relaxed);color:var(--color-text-secondary)}.acknowledgements__content[data-astro-cid-6hemjc7f] a{color:var(--color-text-secondary);text-decoration:underline}.acknowledgements__content[data-astro-cid-6hemjc7f] a:hover{color:var(--color-accent)}
+</style><style>.callout[data-astro-cid-pyumqe5w]{background:var(--color-callout-bg);border:var(--border);border-left-width:3px;border-left-color:var(--callout-accent);border-radius:var(--radius-md);padding:var(--space-5) var(--space-6);margin:var(--space-6) 0}.callout[data-astro-cid-pyumqe5w] p:first-child{margin-top:0}.callout[data-astro-cid-pyumqe5w] p:last-child{margin-bottom:0}.callout[data-astro-cid-pyumqe5w] strong:first-child{color:var(--callout-accent)}
+</style><style>.footnote-wrapper[data-astro-cid-az3ff45i]{counter-increment:footnote-counter;position:relative;display:inline-flex;vertical-align:baseline;line-height:1}.footnote-ref[data-astro-cid-az3ff45i]{text-decoration:none;cursor:pointer}.footnote-number[data-astro-cid-az3ff45i]:after{content:"[" counter(footnote-counter) "]";font-size:.75em;font-weight:600;color:var(--color-accent);vertical-align:super;transition:background-color .15s ease}.footnote-ref[data-astro-cid-az3ff45i]:hover .footnote-number[data-astro-cid-az3ff45i]:after{background-color:#dc26261a;border-radius:2px}.footnote-tooltip[data-astro-cid-az3ff45i]{display:none;position:absolute;bottom:100%;left:50%;transform:translate(-50%);width:280px;padding:var(--space-3) var(--space-4);background:var(--color-card);border:var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow);font-size:var(--text-sm);color:var(--color-text-primary);line-height:var(--leading-normal);z-index:100;margin-bottom:.5rem}.footnote-tooltip[data-astro-cid-az3ff45i]:after{content:"";position:absolute;top:100%;left:50%;transform:translate(-50%);border:6px solid transparent;border-top-color:var(--color-border)}.footnote-wrapper[data-astro-cid-az3ff45i]:hover .footnote-tooltip[data-astro-cid-az3ff45i]{display:block}@media(max-width:640px){.footnote-tooltip[data-astro-cid-az3ff45i]{width:200px;left:0;transform:none}.footnote-tooltip[data-astro-cid-az3ff45i]:after{left:20px;transform:none}}
+</style><style>.sidenote[data-astro-cid-bul54nc5]{counter-increment:sidenote-counter;display:inline-flex;vertical-align:baseline;line-height:1}.sidenote-checkbox[data-astro-cid-bul54nc5]{display:none}.sidenote-number[data-astro-cid-bul54nc5]:after{content:counter(sidenote-counter);font-size:.75em;font-weight:600;color:var(--color-accent);vertical-align:super}.sidenote-toggle[data-astro-cid-bul54nc5]{cursor:default}@media(min-width:768px){.sidenote-content[data-astro-cid-bul54nc5]{display:none!important}}@media(max-width:767px){.sidenote-toggle[data-astro-cid-bul54nc5]{cursor:pointer}.sidenote-content[data-astro-cid-bul54nc5]{display:none;font-size:var(--text-sm);color:var(--color-text-secondary);background:var(--color-callout-bg);border:var(--border);border-radius:var(--radius-sm);padding:var(--space-3) var(--space-4);margin:var(--space-3) 0}.sidenote-content__number[data-astro-cid-bul54nc5]:before{content:counter(sidenote-counter) ". ";font-weight:600;color:var(--color-accent)}.sidenote-checkbox[data-astro-cid-bul54nc5]:checked~.sidenote-content[data-astro-cid-bul54nc5]{display:block}}
+</style></head> <body>  <div class="page" data-astro-cid-4dqtj3le> <div class="container container--article" data-astro-cid-4dqtj3le> <div class="card card--article">  <nav class="nav" id="main-nav"> <a href="/dereferenced" class="nav__logo"> <span class="nav__logo-text">dereferenced</span> <span class="nav__logo-tooltip">Ideas, traced to source</span> </a> <div class="nav__links"> <a href="/dereferenced" class="nav__link nav__link--active">
+writing
+</a> <a href="/about" class="nav__link">
+about
+</a> </div> </nav> <article class="article-layout" data-astro-cid-4dqtj3le> <header class="title-card" data-astro-cid-4dqtj3le> <div class="article__meta" data-astro-cid-4dqtj3le> December 25, 2025 · Machine Learning · 5 min read
+</div> <h1 class="article__title" data-astro-cid-4dqtj3le>The Geometry of Attention</h1> <p class="article__subtitle" data-astro-cid-4dqtj3le>A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio.</p> </header>  <nav class="toc-mobile" aria-label="Table of contents" data-astro-cid-4dqtj3le> <details class="toc-mobile__details" data-astro-cid-4dqtj3le> <summary class="toc-mobile__summary" data-astro-cid-4dqtj3le>Contents</summary> <ul class="toc-mobile__list" data-astro-cid-4dqtj3le> <li class="toc-mobile__item toc-mobile__item--h2" data-astro-cid-4dqtj3le> <a href="#the-softmax-as-a-lens" class="toc-mobile__link" data-astro-cid-4dqtj3le>The Softmax as a Lens</a> </li><li class="toc-mobile__item toc-mobile__item--h2" data-astro-cid-4dqtj3le> <a href="#mathematical-formulation" class="toc-mobile__link" data-astro-cid-4dqtj3le>Mathematical Formulation</a> </li><li class="toc-mobile__item toc-mobile__item--h2" data-astro-cid-4dqtj3le> <a href="#why-this-matters" class="toc-mobile__link" data-astro-cid-4dqtj3le>Why This Matters</a> </li> </ul> </details> </nav> <div class="prose" data-astro-cid-4dqtj3le>  <p>When we talk about attention mechanisms in transformers, we often describe them algorithmically: queries, keys, values, softmax. But there’s a deeper geometric intuition that makes the whole thing click.<span class="sidenote" data-sidenote-id="1" data-astro-cid-bul54nc5> <label class="sidenote-toggle" for="sn-1" data-astro-cid-bul54nc5> <sup class="sidenote-number" data-astro-cid-bul54nc5></sup> </label> <input type="checkbox" id="sn-1" class="sidenote-checkbox" data-astro-cid-bul54nc5> <span class="sidenote-content" data-sidenote-content data-astro-cid-bul54nc5> <span class="sidenote-content__number" data-astro-cid-bul54nc5></span> The original attention mechanism was introduced by Bahdanau et al. (2014) for neural machine translation, before transformers existed. </span> </span> </p>
+<p>Consider what’s actually happening in the attention operation. Each token projects itself into three spaces—as a query asking “what should I attend to?”, as a key advertising “here’s what I contain”, and as a value saying “here’s what I contribute.”</p>
+<h2 id="the-softmax-as-a-lens">The Softmax as a Lens</h2>
+<p>The softmax function isn’t just a normalization trick—it’s a <em>focusing mechanism</em> that creates a probability distribution over positions.<span class="footnote-wrapper" data-footnote-id="1" data-astro-cid-az3ff45i> <a href="#fn-1" id="fnref-1" class="footnote-ref" role="doc-noteref" aria-describedby="fn-1" data-astro-cid-az3ff45i> <span class="footnote-number" data-astro-cid-az3ff45i></span> </a> <span class="footnote-tooltip" role="tooltip" data-footnote-content data-astro-cid-az3ff45i> Technically, softmax is just one choice. Recent work explores alternatives like sparse attention and linear attention. </span> </span>  From an information-theoretic perspective, this is doing something quite profound.</p>
+<aside class="callout" style="--callout-accent: var(--color-accent)" data-astro-cid-pyumqe5w> <p><strong>Note:</strong> The temperature parameter controls the entropy of this distribution. Lower temperatures mean sharper attention (approaching hard attention), while higher temperatures spread probability mass more uniformly.</p> </aside> 
+<p>This has implications for how we think about model capacity and the flow of information through layers.<span class="sidenote" data-sidenote-id="2" data-astro-cid-bul54nc5> <label class="sidenote-toggle" for="sn-2" data-astro-cid-bul54nc5> <sup class="sidenote-number" data-astro-cid-bul54nc5></sup> </label> <input type="checkbox" id="sn-2" class="sidenote-checkbox" data-astro-cid-bul54nc5> <span class="sidenote-content" data-sidenote-content data-astro-cid-bul54nc5> <span class="sidenote-content__number" data-astro-cid-bul54nc5></span> Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions. </span> </span>  When attention is sharp, we’re essentially doing <a href="https://en.wikipedia.org/wiki/Content-addressable_memory">content-based addressing</a>—looking up specific information. When it’s diffuse, we’re aggregating across contexts.</p>
+<h2 id="mathematical-formulation">Mathematical Formulation</h2>
+<p>The attention operation can be written as:</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Attention</mtext><mo stretchy="false">(</mo><mi>Q</mi><mo separator="true">,</mo><mi>K</mi><mo separator="true">,</mo><mi>V</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>softmax</mtext><mrow><mo fence="true">(</mo><mfrac><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac><mo fence="true">)</mo></mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mord text"><span class="mord">Attention</span></span><span class="mopen">(</span><span class="mord mathnormal">Q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord mathnormal" style="margin-right:0.07153em">K</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord mathnormal" style="margin-right:0.22222em">V</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:2.4684em;vertical-align:-0.95em"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mspace" style="margin-right:0.1667em"></span><span class="minner"><span class="mopen delimcenter" style="top:0em"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5183em"><span style="top:-2.2528em"><span class="pstrut" style="height:3em"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8572em"><span class="svg-align" style="top:-3em"><span class="pstrut" style="height:3em"></span><span class="mord" style="padding-left:0.833em"><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span><span style="top:-2.8172em"><span class="pstrut" style="height:3em"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1828em"><span></span></span></span></span></span></span></span><span style="top:-3.23em"><span class="pstrut" style="height:3em"></span><span class="frac-line" style="border-bottom-width:0.04em"></span></span><span style="top:-3.677em"><span class="pstrut" style="height:3em"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em"><span style="top:-3.063em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em">T</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord mathnormal" style="margin-right:0.22222em">V</span></span></span></span></span>
+<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em"></span><span class="mord mathnormal">Q</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal" style="margin-right:0.07153em">K</span></span></span></span>, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal" style="margin-right:0.22222em">V</span></span></span></span> are the query, key, and value matrices respectively, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">d_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> is the dimension of the keys.<span class="footnote-wrapper" data-footnote-id="2" data-astro-cid-az3ff45i> <a href="#fn-2" id="fnref-2" class="footnote-ref" role="doc-noteref" aria-describedby="fn-2" data-astro-cid-az3ff45i> <span class="footnote-number" data-astro-cid-az3ff45i></span> </a> <span class="footnote-tooltip" role="tooltip" data-footnote-content data-astro-cid-az3ff45i> The scaling factor <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mrow><annotation encoding="application/x-tex">\sqrt{d_k}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.1828em"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8572em"><span class="svg-align" style="top:-3em"><span class="pstrut" style="height:3em"></span><span class="mord" style="padding-left:0.833em"><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span><span style="top:-2.8172em"><span class="pstrut" style="height:3em"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1828em"><span></span></span></span></span></span></span></span></span> prevents the dot products from growing too large, which would push softmax into regions with extremely small gradients. </span> </span> </p>
+<h2 id="why-this-matters">Why This Matters</h2>
+<p>Understanding attention geometrically helps explain why transformers generalize so well across domains. The same mechanism that finds relevant words in a sentence can find relevant patches in an image or relevant timesteps in audio.<span class="sidenote" data-sidenote-id="3" data-astro-cid-bul54nc5> <label class="sidenote-toggle" for="sn-3" data-astro-cid-bul54nc5> <sup class="sidenote-number" data-astro-cid-bul54nc5></sup> </label> <input type="checkbox" id="sn-3" class="sidenote-checkbox" data-astro-cid-bul54nc5> <span class="sidenote-content" data-sidenote-content data-astro-cid-bul54nc5> <span class="sidenote-content__number" data-astro-cid-bul54nc5></span> This universality is why the transformer architecture has become the backbone of modern AI, from GPT to DALL-E to Whisper. </span> </span> </p>
+<p>The key insight is that attention is fundamentally about <strong>learned routing</strong>—dynamically deciding where information should flow based on content, not just position.</p>
+<p>Here’s a simple Python example:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> torch</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> torch.nn.functional </span><span style="color:#D73A49">as</span><span style="color:#24292E"> F</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> scaled_dot_product_attention</span><span style="color:#24292E">(Q, K, V):</span></span>
+<span class="line"><span style="color:#24292E">    d_k </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Q.size(</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    scores </span><span style="color:#D73A49">=</span><span style="color:#24292E"> torch.matmul(Q, K.transpose(</span><span style="color:#D73A49">-</span><span style="color:#005CC5">2</span><span style="color:#24292E">, </span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">)) </span><span style="color:#D73A49">/</span><span style="color:#24292E"> math.sqrt(d_k)</span></span>
+<span class="line"><span style="color:#24292E">    attn_weights </span><span style="color:#D73A49">=</span><span style="color:#24292E"> F.softmax(scores, </span><span style="color:#E36209">dim</span><span style="color:#D73A49">=-</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> torch.matmul(attn_weights, V)</span></span></code></pre>
+<p>This is the core operation that powers everything from GPT to DALL-E to Whisper.</p>
+<aside class="acknowledgements" data-astro-cid-6hemjc7f> <h2 class="acknowledgements__title" data-astro-cid-6hemjc7f>Acknowledgements</h2> <div class="acknowledgements__content" data-astro-cid-6hemjc7f> <p>Thanks to [Reviewer 1] for helpful discussions on the geometric interpretation, and to [Reviewer 2] for feedback on early drafts of this post. Any errors remain my own.</p> </div> </aside>   </div>  <section class="footnotes-section" id="footnotes-container" role="doc-endnotes" data-astro-cid-4dqtj3le></section> <div class="newsletter-card" id="newsletter-card" data-astro-cid-drk4da3y> <div class="newsletter-card__title" data-astro-cid-drk4da3y>Enjoyed this post?</div> <div class="newsletter-card__desc" data-astro-cid-drk4da3y>Subscribe to get new articles delivered to your inbox. No spam, unsubscribe anytime.</div> <form class="newsletter-card__form" id="newsletter-form" data-astro-cid-drk4da3y> <input type="text" name="firstName" class="newsletter-card__input newsletter-card__input--name" placeholder="First name" required data-astro-cid-drk4da3y> <input type="email" name="email" class="newsletter-card__input" placeholder="you@example.com" required data-astro-cid-drk4da3y> <button type="submit" class="newsletter-card__btn" data-astro-cid-drk4da3y>Subscribe</button> </form> </div> <script type="module">function s(){const e=document.getElementById("newsletter-form"),r=document.getElementById("newsletter-card");!e||!r||e.addEventListener("submit",async i=>{i.preventDefault();const n=new FormData(e),t=e.querySelector("button");t.disabled=!0,t.textContent="Subscribing...";try{if(!(await fetch("/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({firstName:n.get("firstName"),email:n.get("email")})})).ok)throw new Error("Failed to subscribe");r.innerHTML=`
+          <div class="newsletter-card__success">
+            <div class="newsletter-card__title">Thanks for subscribing!</div>
+            <div class="newsletter-card__desc">You'll receive new articles in your inbox.</div>
+          </div>
+        `}catch{t.disabled=!1,t.textContent="Subscribe",alert("Something went wrong. Please try again.")}})}s();document.addEventListener("astro:page-load",s);</script>  <section class="comments" id="comments" data-astro-cid-kjo32iow> <h2 class="comments__title" data-astro-cid-kjo32iow>Comments</h2> <div id="remark42" data-astro-cid-kjo32iow></div> </section> <script>(function(){const REMARK42_HOST = "https://comments.akshaymanglik.com";
+const REMARK42_SITE_ID = "dereferenced";
+const url = "https://akshaymanglik.com/dereferenced/geometry-of-attention/";
+const pageId = "/dereferenced/geometry-of-attention/";
+
+  // Remark42 configuration
+  window.remark_config = {
+    host: REMARK42_HOST,
+    site_id: REMARK42_SITE_ID,
+    url: url,
+    page_title: document.title,
+    theme: 'light',
+    locale: 'en',
+    show_email_subscription: false,
+    simple_view: false,
+    no_footer: false,
+  };
+
+  // Load Remark42 script
+  (function() {
+    const d = document;
+    const s = d.createElement('script');
+    s.src = `${REMARK42_HOST}/web/embed.js`;
+    s.defer = true;
+    s.async = true;
+    d.head.appendChild(s);
+
+    // Apply custom styles via MutationObserver when iframe loads
+    const injectStyles = () => {
+      const customCSS = `
+        /* Custom Remark42 styles to match Dereferenced design */
+        :root {
+          --font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          --color-primary: #DC2626 !important;
+          --color-hover: #B91C1C !important;
+        }
+
+        body {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .auth-panel,
+        .comment,
+        .comment__input {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .comment {
+          border-left: 2px solid #E5E5E5 !important;
+          border-radius: 0 !important;
+        }
+
+        .comment:hover {
+          border-left-color: #DC2626 !important;
+        }
+
+        .comment__text {
+          font-size: 15px !important;
+          line-height: 1.6 !important;
+          color: #4A4A4A !important;
+        }
+
+        .comment__input textarea {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+          font-size: 15px !important;
+          border: 1px solid #1A1A1A !important;
+          border-radius: 10px !important;
+        }
+
+        .comment__input textarea:focus {
+          border-color: #DC2626 !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+
+        .comment__action,
+        .comment__action-link {
+          color: #6B6B6B !important;
+        }
+
+        .comment__action:hover,
+        .comment__action-link:hover {
+          color: #DC2626 !important;
+        }
+
+        button.auth-panel__submit,
+        button[type="submit"] {
+          background: #DC2626 !important;
+          border: 1px solid #1A1A1A !important;
+          border-radius: 6px !important;
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+          font-weight: 500 !important;
+          transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+        }
+
+        button.auth-panel__submit:hover,
+        button[type="submit"]:hover {
+          transform: translate(-2px, -2px) !important;
+          box-shadow: 3px 3px 0 #1A1A1A !important;
+        }
+
+        .auth-panel__provider-name {
+          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
+        }
+
+        .auth-panel__user-id {
+          color: #4A4A4A !important;
+        }
+
+        a {
+          color: #DC2626 !important;
+        }
+
+        a:hover {
+          color: #B91C1C !important;
+        }
+      `;
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.tagName === 'IFRAME' && node.id && node.id.startsWith('remark42')) {
+              node.addEventListener('load', () => {
+                try {
+                  const iframeDoc = node.contentDocument || node.contentWindow.document;
+                  if (iframeDoc) {
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = customCSS;
+                    iframeDoc.head.appendChild(style);
+                  }
+                } catch (e) {
+                  // Cross-origin restrictions may prevent this
+                  console.log('Could not inject custom styles into Remark42 iframe');
+                }
+              });
+            }
+          });
+        });
+      });
+
+      observer.observe(document.getElementById('remark42'), {
+        childList: true,
+        subtree: true
+      });
+    };
+
+    // Start observing when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectStyles);
+    } else {
+      injectStyles();
+    }
+  })();
+})();</script>   <nav class="toc-sidebar" aria-label="Table of contents" data-astro-cid-4dqtj3le> <div class="toc-sidebar__title" data-astro-cid-4dqtj3le>Contents</div> <ul class="toc-sidebar__list" data-astro-cid-4dqtj3le> <li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#the-softmax-as-a-lens" class="toc-sidebar__link" data-astro-cid-4dqtj3le>The Softmax as a Lens</a> </li><li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#mathematical-formulation" class="toc-sidebar__link" data-astro-cid-4dqtj3le>Mathematical Formulation</a> </li><li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#why-this-matters" class="toc-sidebar__link" data-astro-cid-4dqtj3le>Why This Matters</a> </li> </ul> </nav>  <aside class="sidenotes-gutter" aria-label="Sidenotes" data-astro-cid-4dqtj3le>  </aside> </article> <footer class="footer"> <p class="footer__text">
+© 2025 · Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> </p> </footer>  </div> </div> </div>  </body></html> <script type="module">function u(){const t=document.querySelectorAll(".toc-sidebar__link"),o=document.querySelectorAll("h2[id], h3[id]");if(t.length===0||o.length===0)return;t.forEach(c=>{c.addEventListener("click",()=>{t.forEach(n=>n.classList.remove("toc-sidebar__link--active")),c.classList.add("toc-sidebar__link--active")})});function r(){let n=null;for(const e of Array.from(o))if(e.getBoundingClientRect().top<=300)n=e;else break;!n&&o.length>0&&o[0].getBoundingClientRect().top<window.innerHeight&&(n=o[0]),!n&&o.length>0&&(n=o[0]),n&&(t.forEach(e=>e.classList.remove("toc-sidebar__link--active")),document.querySelector(`.toc-sidebar__link[href="#${n.id}"]`)?.classList.add("toc-sidebar__link--active"))}let i=!1;window.addEventListener("scroll",()=>{i||(window.requestAnimationFrame(()=>{r(),i=!1}),i=!0)}),r()}function d(){const t=document.querySelector(".sidenotes-gutter"),o=document.querySelectorAll("[data-sidenote-id]");if(!t)return;if(window.innerWidth<768){t.innerHTML="";return}if(o.length===0){t.innerHTML="";return}const r=t.getBoundingClientRect();t.innerHTML="",o.forEach((i,c)=>{i.dataset.sidenoteId;const n=i.querySelector("[data-sidenote-content]")?.innerHTML||"",s=i.getBoundingClientRect().top-r.top-12,a=document.createElement("div");a.className="sidenote-gutter-item",a.style.top=`${s}px`,a.innerHTML=`<span class="sidenote-gutter-item__number">${c+1}.</span> ${n}`,t.appendChild(a)})}function f(){const t=document.getElementById("footnotes-container"),o=document.querySelectorAll("[data-footnote-id]"),r=document.querySelector(".acknowledgements");if(!t)return;if(o.length===0&&!r){t.remove();return}let i="";r&&(i=r.outerHTML,r.remove());const c=Array.from(o).map(e=>{const s=e.dataset.footnoteId,a=e.querySelector("[data-footnote-content]")?.innerHTML||"";return{id:s,content:a}}),n=[...new Map(c.map(e=>[e.id,e])).values()];n.sort((e,s)=>parseInt(e.id||"0")-parseInt(s.id||"0")),t.innerHTML=`
+      <hr class="footnotes-divider" />
+      ${i}
+      ${n.length>0?`
+        <h2 class="footnotes-title">Footnotes</h2>
+        <ol class="footnotes-list">
+          ${n.map(e=>`
+            <li id="fn-${e.id}" class="footnote-item">
+              ${e.content}
+              <a href="#fnref-${e.id}" class="footnote-backref" aria-label="Back to reference">↩</a>
+            </li>
+          `).join("")}
+        </ol>
+      `:""}
+    `,!i&&n.length===0&&t.remove()}u();f();document.fonts.ready.then(()=>{d()});let l;window.addEventListener("resize",()=>{clearTimeout(l),l=setTimeout(d,150)});document.addEventListener("astro:page-load",()=>{u(),f(),document.fonts.ready.then(()=>{d()})});</script> 

@@ -1,0 +1,55 @@
+---
+title: "Understanding GRPO"
+description: "Group Relative Policy Optimization eliminates the learned value function. Here's why that matters for RL training."
+pubDate: 2025-11-15
+category: "Reinforcement Learning"
+tags: ["rl", "llm", "training"]
+---
+
+Group Relative Policy Optimization (GRPO) represents a significant simplification in how we train language models with reinforcement learning. The key insight? We don't actually need a learned value function.
+
+## The Problem with Traditional RL
+
+In standard policy gradient methods like PPO, we maintain two neural networks:
+
+1. **Policy network**: Decides what action to take
+2. **Value network**: Estimates expected future reward
+
+The value network is used to compute advantages—how much better an action was compared to what we expected. But this introduces challenges:
+
+- Training instability from two competing objectives
+- Increased memory and compute requirements
+- Potential for value estimation errors to corrupt policy updates
+
+## GRPO's Solution
+
+GRPO sidesteps the value function entirely by using **group-relative baselines**. Instead of asking "how much better was this action than expected?", it asks "how much better was this response than the others in this batch?"
+
+```python
+# Simplified GRPO advantage computation
+def compute_grpo_advantages(rewards, group_size):
+    # Reshape into groups
+    grouped = rewards.reshape(-1, group_size)
+
+    # Subtract group mean (the baseline)
+    group_means = grouped.mean(dim=-1, keepdim=True)
+    advantages = grouped - group_means
+
+    return advantages.flatten()
+```
+
+This is elegant for several reasons:
+
+1. **No learned component**: The baseline is a simple statistic
+2. **Automatic scaling**: Advantages are always relative to the batch
+3. **Reduced variance**: Comparing within groups controls for prompt difficulty
+
+## Implications for LLM Training
+
+For language model fine-tuning, GRPO means we can:
+
+- Run more experiments with the same compute budget
+- Avoid value head initialization issues
+- Simplify the training loop significantly
+
+The tradeoff is that we need multiple completions per prompt, but for LLM training this is often desirable anyway for diversity.

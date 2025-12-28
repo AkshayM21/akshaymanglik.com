@@ -1,0 +1,44 @@
+---
+interface Props {
+  type?: 'note' | 'warning' | 'tip' | 'important';
+}
+
+const { type = 'note' } = Astro.props;
+
+const accentColors: Record<string, string> = {
+  note: 'var(--color-accent)',
+  warning: '#D97706',
+  tip: '#059669',
+  important: '#7C3AED',
+};
+
+const accentColor = accentColors[type] || accentColors.note;
+---
+
+<aside class="callout" style={`--callout-accent: ${accentColor}`}>
+  <slot />
+</aside>
+
+<style>
+  .callout {
+    background: var(--color-callout-bg);
+    border: var(--border);
+    border-left-width: 3px;
+    border-left-color: var(--callout-accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-6);
+    margin: var(--space-6) 0;
+  }
+
+  .callout :global(p:first-child) {
+    margin-top: 0;
+  }
+
+  .callout :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .callout :global(strong:first-child) {
+    color: var(--callout-accent);
+  }
+</style>

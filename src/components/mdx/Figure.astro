@@ -1,0 +1,48 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  fullWidth?: boolean;
+}
+
+const { src, alt, caption, fullWidth = false } = Astro.props;
+---
+
+<figure class:list={['figure', { 'figure--full': fullWidth }]}>
+  <img src={src} alt={alt} class="figure__image" loading="lazy" />
+  {caption && <figcaption class="figure__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .figure {
+    margin: var(--space-8) 0;
+  }
+
+  .figure--full {
+    margin-left: calc(-1 * var(--space-6));
+    margin-right: calc(-1 * var(--space-6));
+  }
+
+  @media (min-width: 1100px) {
+    .figure--full {
+      margin-left: calc(-1 * var(--space-12));
+      margin-right: calc(-1 * 280px - var(--space-12));
+    }
+  }
+
+  .figure__image {
+    width: 100%;
+    height: auto;
+    border: var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .figure__caption {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+    font-style: italic;
+  }
+</style>

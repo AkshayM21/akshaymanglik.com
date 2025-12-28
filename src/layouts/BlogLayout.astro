@@ -1,0 +1,375 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '@/components/global/Header.astro';
+import Footer from '@/components/global/Footer.astro';
+import Card from '@/components/global/Card.astro';
+import Remark42 from '@/components/comments/Remark42.astro';
+import NewsletterCard from '@/components/newsletter/NewsletterCard.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  category?: string;
+  heroImage?: string;
+  headings?: Heading[];
+}
+
+const { title, description, pubDate, updatedDate, category, heroImage, headings = [] } = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Calculate reading time (rough estimate: 200 words per minute)
+const content = await Astro.slots.render('default');
+const wordCount = content.split(/\s+/).length;
+const readingTime = Math.ceil(wordCount / 200);
+
+// Filter headings for TOC (h2 and h3 only)
+const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
+const showTOC = tocHeadings.length > 2;
+---
+
+<BaseLayout title={`${title} — Dereferenced`} description={description} image={heroImage}>
+  <div class="page">
+    <div class="container container--article">
+      <Card class="card--article">
+        <Header currentPath="/dereferenced" />
+        <article class="article-layout">
+          <header class="title-card">
+            <div class="article__meta">
+              {formattedPubDate}{category && ` · ${category}`} · {readingTime} min read
+            </div>
+            <h1 class="article__title">{title}</h1>
+            {description && <p class="article__subtitle">{description}</p>}
+          </header>
+
+          {/* Mobile TOC - shown above content on small screens */}
+          {showTOC && (
+            <nav class="toc-mobile" aria-label="Table of contents">
+              <details class="toc-mobile__details">
+                <summary class="toc-mobile__summary">Contents</summary>
+                <ul class="toc-mobile__list">
+                  {tocHeadings.map(h => (
+                    <li class={`toc-mobile__item toc-mobile__item--h${h.depth}`}>
+                      <a href={`#${h.slug}`} class="toc-mobile__link">{h.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </nav>
+          )}
+
+          <div class="prose">
+            <slot />
+          </div>
+
+          {/* Footnotes container - populated by JS */}
+          <section class="footnotes-section" id="footnotes-container" role="doc-endnotes">
+          </section>
+
+          <NewsletterCard variant="article" />
+
+          <Remark42 />
+
+          {/* Sidebar TOC - sticky on desktop (column 1) */}
+          {showTOC && (
+            <nav class="toc-sidebar" aria-label="Table of contents">
+              <div class="toc-sidebar__title">Contents</div>
+              <ul class="toc-sidebar__list">
+                {tocHeadings.map(h => (
+                  <li class={`toc-sidebar__item toc-sidebar__item--h${h.depth}`}>
+                    <a href={`#${h.slug}`} class="toc-sidebar__link">{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          {/* Sidenotes gutter - right column (column 3) */}
+          <aside class="sidenotes-gutter" aria-label="Sidenotes">
+            {/* Populated by JavaScript */}
+          </aside>
+        </article>
+        <Footer />
+      </Card>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  function initScrollSpy() {
+    const links = document.querySelectorAll('.toc-sidebar__link');
+    const headings = document.querySelectorAll('h2[id], h3[id]');
+
+    if (links.length === 0 || headings.length === 0) return;
+
+    // Click handler - immediately highlight clicked link
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        links.forEach(l => l.classList.remove('toc-sidebar__link--active'));
+        link.classList.add('toc-sidebar__link--active');
+      });
+    });
+
+    // Scroll-based approach: highlight the heading the user is currently reading
+    function updateActiveLink() {
+      // Find the heading whose section is currently being read
+      // Logic: pick the last heading that is above a threshold (scrolled past)
+      // This ensures we're in the section that's currently at the top of viewport
+      const threshold = 300; // pixels from top where we consider "reading" the section
+
+      let activeHeading: Element | null = null;
+
+      for (const heading of Array.from(headings)) {
+        const rect = heading.getBoundingClientRect();
+
+        // If heading is at or above the threshold, we're in this section
+        if (rect.top <= threshold) {
+          activeHeading = heading;
+        } else {
+          // Once we find a heading below the threshold, stop
+          // (headings are in document order)
+          break;
+        }
+      }
+
+      // If no heading has been scrolled past yet, use the first one if visible
+      if (!activeHeading && headings.length > 0) {
+        const firstRect = headings[0].getBoundingClientRect();
+        if (firstRect.top < window.innerHeight) {
+          activeHeading = headings[0];
+        }
+      }
+
+      // Fallback to first heading
+      if (!activeHeading && headings.length > 0) {
+        activeHeading = headings[0];
+      }
+
+      if (activeHeading) {
+        links.forEach(link => link.classList.remove('toc-sidebar__link--active'));
+        document.querySelector(`.toc-sidebar__link[href="#${activeHeading.id}"]`)?.classList.add('toc-sidebar__link--active');
+      }
+    }
+
+    // Throttled scroll handler
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateActiveLink();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Initialize on load
+    updateActiveLink();
+  }
+
+  function collectSidenotes() {
+    const gutter = document.querySelector('.sidenotes-gutter');
+    const sidenotes = document.querySelectorAll('[data-sidenote-id]');
+
+    if (!gutter) return;
+
+    // Only teleport on desktop (>=768px)
+    if (window.innerWidth < 768) {
+      gutter.innerHTML = '';
+      return;
+    }
+
+    if (sidenotes.length === 0) {
+      gutter.innerHTML = '';
+      return;
+    }
+
+    // Get gutter position for positioning reference
+    const gutterRect = gutter.getBoundingClientRect();
+
+    gutter.innerHTML = '';
+
+    sidenotes.forEach((sidenote, index) => {
+      const id = (sidenote as HTMLElement).dataset.sidenoteId;
+      const content = sidenote.querySelector('[data-sidenote-content]')?.innerHTML || '';
+
+      // Calculate vertical position relative to gutter, with offset to center with superscript line
+      const markerRect = sidenote.getBoundingClientRect();
+      const topOffset = markerRect.top - gutterRect.top - 12;
+
+      const item = document.createElement('div');
+      item.className = 'sidenote-gutter-item';
+      item.style.top = `${topOffset}px`;
+      item.innerHTML = `<span class="sidenote-gutter-item__number">${index + 1}.</span> ${content}`;
+
+      gutter.appendChild(item);
+    });
+  }
+
+  function collectFootnotes() {
+    const container = document.getElementById('footnotes-container');
+    const footnotes = document.querySelectorAll('[data-footnote-id]');
+    const acknowledgements = document.querySelector('.acknowledgements');
+
+    if (!container) return;
+
+    if (footnotes.length === 0 && !acknowledgements) {
+      container.remove();
+      return;
+    }
+
+    // Move acknowledgements into footnotes container (before footnotes list)
+    let ackHTML = '';
+    if (acknowledgements) {
+      ackHTML = acknowledgements.outerHTML;
+      acknowledgements.remove();
+    }
+
+    // Build footnotes list from data attributes
+    const items = Array.from(footnotes).map(fn => {
+      const id = (fn as HTMLElement).dataset.footnoteId;
+      const content = fn.querySelector('[data-footnote-content]')?.innerHTML || '';
+      return { id, content };
+    });
+
+    // Remove duplicates (same id)
+    const unique = [...new Map(items.map(i => [i.id, i])).values()];
+
+    // Sort by id numerically
+    unique.sort((a, b) => parseInt(a.id || '0') - parseInt(b.id || '0'));
+
+    // Render: divider → acknowledgements → footnotes
+    container.innerHTML = `
+      <hr class="footnotes-divider" />
+      ${ackHTML}
+      ${unique.length > 0 ? `
+        <h2 class="footnotes-title">Footnotes</h2>
+        <ol class="footnotes-list">
+          ${unique.map(fn => `
+            <li id="fn-${fn.id}" class="footnote-item">
+              ${fn.content}
+              <a href="#fnref-${fn.id}" class="footnote-backref" aria-label="Back to reference">↩</a>
+            </li>
+          `).join('')}
+        </ol>
+      ` : ''}
+    `;
+
+    // Remove container if nothing rendered
+    if (!ackHTML && unique.length === 0) {
+      container.remove();
+    }
+  }
+
+  // Initialize on page load - wait for fonts to ensure correct sidenote positioning
+  initScrollSpy();
+  collectFootnotes();
+  document.fonts.ready.then(() => {
+    collectSidenotes();
+  });
+
+  // Re-initialize on resize (handles mobile/desktop transition)
+  let resizeTimeout: ReturnType<typeof setTimeout>;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(collectSidenotes, 150);
+  });
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    initScrollSpy();
+    collectFootnotes();
+    document.fonts.ready.then(() => {
+      collectSidenotes();
+    });
+  });
+</script>
+
+<style>
+  .container--article {
+    max-width: var(--article-container-width);
+  }
+
+  /* Mobile TOC styles */
+  .toc-mobile {
+    margin-bottom: var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-callout-bg);
+    border: var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .toc-mobile__details {
+    margin: 0;
+  }
+
+  .toc-mobile__summary {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .toc-mobile__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-mobile__summary::before {
+    content: '▸';
+    font-size: 0.75em;
+    transition: transform 0.15s ease;
+  }
+
+  .toc-mobile__details[open] .toc-mobile__summary::before {
+    transform: rotate(90deg);
+  }
+
+  .toc-mobile__list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0 0;
+  }
+
+  .toc-mobile__item {
+    margin-bottom: var(--space-2);
+  }
+
+  .toc-mobile__item--h3 {
+    padding-left: var(--space-4);
+  }
+
+  .toc-mobile__link {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .toc-mobile__link:hover {
+    color: var(--color-text-primary);
+  }
+
+  /* Hide mobile TOC on desktop */
+  @media (min-width: 768px) {
+    .toc-mobile {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<span class="footnote-wrapper" data-footnote-id={id}>
+  <a
+    href={`#fn-${id}`}
+    id={`fnref-${id}`}
+    class="footnote-ref"
+    role="doc-noteref"
+    aria-describedby={`fn-${id}`}
+  >
+    <span class="footnote-number"></span>
+  </a>
+  <span class="footnote-tooltip" role="tooltip" data-footnote-content>
+    <slot />
+  </span>
+</span>
+
+<style>
+  .footnote-wrapper {
+    counter-increment: footnote-counter;
+    position: relative;
+    /* Fix whitespace gap - flex ignores whitespace between children */
+    display: inline-flex;
+    vertical-align: baseline;
+    line-height: 1;
+  }
+
+  .footnote-ref {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .footnote-number::after {
+    content: "[" counter(footnote-counter) "]";
+    font-size: 0.75em;
+    font-weight: 600;
+    color: var(--color-accent);
+    vertical-align: super;
+    transition: background-color 0.15s ease;
+  }
+
+  .footnote-ref:hover .footnote-number::after {
+    background-color: rgba(220, 38, 38, 0.1);
+    border-radius: 2px;
+  }
+
+  .footnote-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-card);
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    line-height: var(--leading-normal);
+    z-index: 100;
+    margin-bottom: 0.5rem;
+  }
+
+  .footnote-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--color-border);
+  }
+
+  .footnote-wrapper:hover .footnote-tooltip {
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .footnote-tooltip {
+      width: 200px;
+      left: 0;
+      transform: none;
+    }
+
+    .footnote-tooltip::after {
+      left: 20px;
+      transform: none;
+    }
+  }
+</style>

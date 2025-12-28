@@ -1,0 +1,39 @@
+---
+// Content via slot - will be teleported to footnotes section by JS
+---
+
+<aside class="acknowledgements">
+  <h2 class="acknowledgements__title">Acknowledgements</h2>
+  <div class="acknowledgements__content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .acknowledgements {
+    margin-bottom: var(--space-8);
+  }
+
+  .acknowledgements__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);  /* 18px - same as Footnotes */
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    color: var(--color-text-primary);
+  }
+
+  .acknowledgements__content {
+    font-size: var(--text-sm);  /* 14px - same as footnotes */
+    line-height: var(--leading-relaxed);
+    color: var(--color-text-secondary);
+  }
+
+  .acknowledgements__content :global(a) {
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+  }
+
+  .acknowledgements__content :global(a:hover) {
+    color: var(--color-accent);
+  }
+</style>

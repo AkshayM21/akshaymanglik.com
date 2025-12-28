@@ -1,0 +1,34 @@
+{
+  "name": "dereferenced",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "newsletter": "npx ts-node scripts/generate-newsletter.ts",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/rss": "^4.0.14",
+    "@astrojs/sitemap": "^3.2.0",
+    "@astrojs/vercel": "^8.0.0",
+    "@vercel/node": "^5.5.16",
+    "@vercel/og": "^0.6.8",
+    "astro": "^5.0.0",
+    "firebase-admin": "^13.6.0",
+    "katex": "^0.16.0",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^22.0.0",
+    "gray-matter": "^4.0.3",
+    "typescript": "^5.0.0"
+  }
+}
