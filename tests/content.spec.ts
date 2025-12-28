@@ -26,13 +26,13 @@ test.describe('Content rendering', () => {
   test('Sidenote component renders', async ({ page }) => {
     await page.goto('/dereferenced/geometry-of-attention');
 
-    // Sidenote toggle should be visible
-    const sidenoteToggle = page.locator('.sidenote-toggle').first();
-    await expect(sidenoteToggle).toBeVisible();
+    // Sidenote number marker should be visible
+    const sidenoteNumber = page.locator('.sidenote-number').first();
+    await expect(sidenoteNumber).toBeVisible();
 
-    // Sidenote gutter version exists (desktop)
-    const sidenoteGutter = page.locator('.sidenote-gutter').first();
-    await expect(sidenoteGutter).toBeAttached();
+    // Sidenote content should exist (uses Tufte float pattern)
+    const sidenoteContent = page.locator('.sidenote-content').first();
+    await expect(sidenoteContent).toBeAttached();
   });
 
   test('Math equations render with KaTeX', async ({ page }) => {

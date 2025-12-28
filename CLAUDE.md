@@ -111,7 +111,7 @@ Text with a footnote<Footnote id="1">This shows on hover and in the footnotes se
 - **Cards**: White background, 1px black border, 3px offset shadow, 14px radius
 - **Callouts**: Cream background, no shadow (flat for hierarchy)
 - **Post cards**: Hover effect with `translate(-2px, -2px)` + shadow pop-out
-- **Logo**: "dereferenced" text transitions to `*` symbol on scroll (>50px)
+- **Logo**: "dereferenced" text with "Ideas, traced to source" tooltip on hover (desktop only)
 
 ## URL Structure
 
@@ -132,6 +132,50 @@ PUBLIC_REMARK42_SITE_ID=dereferenced
 ```
 
 The Remark42.astro component injects custom CSS to match the design system.
+
+## Newsletter (Kit + Firebase)
+
+Newsletter signups use Kit (ConvertKit) for email delivery with Firebase Firestore as a backup database.
+
+### Environment Variables
+
+```bash
+# Kit API (v4 key for subscriptions, v3 secret for webhooks)
+KIT_API_KEY=kit_xxxxx
+KIT_API_SECRET=xxxxx
+KIT_WEBHOOK_SECRET=your-random-secret
+
+# Firebase Service Account
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+```
+
+### Firebase Setup
+
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com/)
+2. Enable Firestore Database (production mode, us-central1)
+3. Go to Project Settings → Service Accounts → Generate new private key
+4. Copy values from downloaded JSON to environment variables
+
+### Kit Webhook Setup
+
+After deploying, create the unsubscribe webhook:
+
+```bash
+curl -X POST https://api.convertkit.com/v3/automations/hooks \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "api_secret": "<KIT_API_SECRET>",
+    "target_url": "https://akshaymanglik.com/api/webhooks/kit?secret=<KIT_WEBHOOK_SECRET>",
+    "event": { "name": "subscriber.subscriber_unsubscribe" }
+  }'
+```
+
+### API Routes
+
+- `POST /api/subscribe` - Subscribe a new user (saves to Firebase + Kit)
+- `POST /api/webhooks/kit?secret=xxx` - Webhook for Kit unsubscribe events
 
 ## Deployment
 

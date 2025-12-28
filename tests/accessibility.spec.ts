@@ -36,12 +36,16 @@ test.describe('Accessibility', () => {
     expect(role).toBe('doc-endnotes');
   });
 
-  test('sidenote has aria label', async ({ page }) => {
+  test('sidenote has proper structure', async ({ page }) => {
     await page.goto('/dereferenced/geometry-of-attention');
 
-    const sidenoteGutter = page.locator('.sidenote-gutter').first();
-    const ariaLabel = await sidenoteGutter.getAttribute('aria-label');
-    expect(ariaLabel).toContain('Sidenote');
+    // Sidenote wrapper should have data attribute for identification
+    const sidenote = page.locator('.sidenote').first();
+    await expect(sidenote).toBeAttached();
+
+    // Should have the data-sidenote-id attribute
+    const sidenoteId = await sidenote.getAttribute('data-sidenote-id');
+    expect(sidenoteId).toBeTruthy();
   });
 
   test('TOC links are keyboard navigable', async ({ page }) => {
@@ -99,13 +103,13 @@ test.describe('Accessibility', () => {
   test('heading hierarchy is correct', async ({ page }) => {
     await page.goto('/dereferenced/geometry-of-attention');
 
-    // Should have an h1
-    const h1 = page.locator('h1');
+    // Should have an h1 (article title)
+    const h1 = page.locator('.article__title');
     await expect(h1).toBeVisible();
 
-    // h1 should come before h2s
+    // h1 should come before h2s in the prose
     const h1BoundingBox = await h1.boundingBox();
-    const firstH2 = page.locator('h2').first();
+    const firstH2 = page.locator('.prose h2').first();
     const h2BoundingBox = await firstH2.boundingBox();
 
     if (h1BoundingBox && h2BoundingBox) {

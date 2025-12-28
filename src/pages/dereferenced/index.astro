@@ -5,6 +5,7 @@ import Header from '@/components/global/Header.astro';
 import Footer from '@/components/global/Footer.astro';
 import Card from '@/components/global/Card.astro';
 import PostCard from '@/components/blog/PostCard.astro';
+import NewsletterCard from '@/components/newsletter/NewsletterCard.astro';
 
 const posts = (await getCollection('blog', ({ data }) => {
   // Show drafts in dev, hide in production
@@ -28,6 +29,7 @@ const posts = (await getCollection('blog', ({ data }) => {
               slug={post.slug}
             />
           ))}
+          <NewsletterCard variant="listing" />
         </div>
         <Footer />
       </Card>

@@ -1,0 +1,181 @@
+---
+interface Props {
+  variant?: 'article' | 'listing';
+}
+const { variant = 'article' } = Astro.props;
+
+const title = variant === 'article'
+  ? 'Enjoyed this post?'
+  : 'Subscribe to Dereferenced';
+const desc = variant === 'article'
+  ? 'Subscribe to get new articles delivered to your inbox. No spam, unsubscribe anytime.'
+  : 'New articles on technology, politics, and economics. No spam, unsubscribe anytime.';
+---
+
+<div class:list={["newsletter-card", { "newsletter-card--listing": variant === "listing" }]} id="newsletter-card">
+  <div class="newsletter-card__title">{title}</div>
+  <div class="newsletter-card__desc">{desc}</div>
+  <form class="newsletter-card__form" id="newsletter-form">
+    <input type="text" name="firstName" class="newsletter-card__input newsletter-card__input--name" placeholder="First name" required />
+    <input type="email" name="email" class="newsletter-card__input" placeholder="you@example.com" required />
+    <button type="submit" class="newsletter-card__btn">Subscribe</button>
+  </form>
+</div>
+
+<script>
+  function initNewsletterForm() {
+    const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+    const card = document.getElementById('newsletter-card');
+
+    if (!form || !card) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const btn = form.querySelector('button') as HTMLButtonElement;
+      btn.disabled = true;
+      btn.textContent = 'Subscribing...';
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName: formData.get('firstName'),
+            email: formData.get('email'),
+          }),
+        });
+
+        if (!res.ok) throw new Error('Failed to subscribe');
+
+        // Replace form with success message
+        card.innerHTML = `
+          <div class="newsletter-card__success">
+            <div class="newsletter-card__title">Thanks for subscribing!</div>
+            <div class="newsletter-card__desc">You'll receive new articles in your inbox.</div>
+          </div>
+        `;
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Subscribe';
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  }
+
+  // Initialize on page load
+  initNewsletterForm();
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initNewsletterForm);
+</script>
+
+<style>
+  .newsletter-card {
+    background: var(--color-newsletter-bg);
+    border: var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-top: var(--space-8);
+  }
+
+  .newsletter-card__title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .newsletter-card__desc {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .newsletter-card__form {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .newsletter-card__input {
+    flex: 1;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    border: var(--border);
+    border-radius: 6px;
+    background: var(--color-card);
+  }
+
+  .newsletter-card__input--name {
+    flex: 0.7;
+  }
+
+  .newsletter-card__input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+
+  .newsletter-card__btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: var(--color-accent);
+    color: white;
+    border: var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    white-space: nowrap;
+  }
+
+  .newsletter-card__btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow);
+  }
+
+  .newsletter-card__btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Mobile: stacked layout */
+  @media (max-width: 640px) {
+    .newsletter-card__form {
+      flex-direction: column;
+    }
+
+    .newsletter-card__input--name {
+      flex: 1;
+    }
+
+    .newsletter-card__btn {
+      width: 100%;
+    }
+  }
+
+  /* Listing variant - matches post card sizing */
+  .newsletter-card--listing {
+    margin-top: 0;
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .newsletter-card--listing .newsletter-card__title {
+    font-size: var(--text-xl);
+  }
+
+  .newsletter-card--listing .newsletter-card__desc {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .newsletter-card--listing .newsletter-card__input,
+  .newsletter-card--listing .newsletter-card__btn {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-sm);
+  }
+</style>

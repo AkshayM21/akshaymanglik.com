@@ -25,7 +25,10 @@ const { id } = Astro.props;
   .footnote-wrapper {
     counter-increment: footnote-counter;
     position: relative;
-    display: inline;
+    /* Fix whitespace gap - flex ignores whitespace between children */
+    display: inline-flex;
+    vertical-align: baseline;
+    line-height: 1;
   }
 
   .footnote-ref {
@@ -39,7 +42,6 @@ const { id } = Astro.props;
     font-weight: 600;
     color: var(--color-accent);
     vertical-align: super;
-    padding: 0 0.15em;
     transition: background-color 0.15s ease;
   }
 

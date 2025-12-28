@@ -2,94 +2,77 @@
 interface Props {
   id: string;
 }
-
 const { id } = Astro.props;
 ---
 
-<span class="sidenote-wrapper" data-sidenote-id={id}>
-  <label class="sidenote-toggle" for={`sn-${id}`} aria-label="Toggle sidenote">
-    <span class="sidenote-number"></span>
+<span class="sidenote" data-sidenote-id={id}>
+  <label class="sidenote-toggle" for={`sn-${id}`}>
+    <sup class="sidenote-number"></sup>
   </label>
   <input type="checkbox" id={`sn-${id}`} class="sidenote-checkbox" />
-  {/* Mobile inline version */}
-  <span class="sidenote-inline">
-    <span class="sidenote-number"></span>
+  <span class="sidenote-content" data-sidenote-content>
+    <span class="sidenote-content__number"></span>
     <slot />
   </span>
 </span>
-{/* Desktop gutter version - positioned in grid column 3 */}
-<aside class="sidenote-gutter" aria-label={`Sidenote ${id}`}>
-  <span class="sidenote-gutter__number">{id}.</span>
-  <slot />
-</aside>
 
 <style>
-  .sidenote-wrapper {
+  .sidenote {
     counter-increment: sidenote-counter;
+    display: inline-flex;
+    vertical-align: baseline;
+    line-height: 1;
   }
 
   .sidenote-checkbox {
     display: none;
   }
 
-  .sidenote-toggle {
-    cursor: pointer;
-  }
-
-  .sidenote-toggle .sidenote-number::after {
+  /* Superscript number marker - always visible */
+  .sidenote-number::after {
     content: counter(sidenote-counter);
     font-size: 0.75em;
     font-weight: 600;
     color: var(--color-accent);
     vertical-align: super;
-    padding: 0 0.15em;
-    transition: background-color 0.15s ease;
   }
 
-  .sidenote-toggle:hover .sidenote-number::after {
-    background-color: rgba(220, 38, 38, 0.1);
-    border-radius: 2px;
+  .sidenote-toggle {
+    cursor: default;
   }
 
-  /* Mobile inline sidenote */
-  .sidenote-inline {
-    display: none;
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-normal);
-    background: var(--color-callout-bg);
-    border: var(--border);
-    border-radius: var(--radius-sm);
-    padding: var(--space-3) var(--space-4);
-    margin: var(--space-3) 0;
-    width: 100%;
-  }
-
-  .sidenote-inline .sidenote-number::after {
-    content: counter(sidenote-counter) ". ";
-    font-weight: 600;
-    color: var(--color-accent);
-  }
-
-  .sidenote-checkbox:checked + .sidenote-inline {
-    display: block;
-  }
-
-  /* Desktop: hide toggle interaction, show gutter */
+  /* DESKTOP: Hide inline content (shown in gutter via JS) */
   @media (min-width: 768px) {
-    .sidenote-toggle {
-      cursor: default;
-    }
-
-    .sidenote-inline {
+    .sidenote-content {
       display: none !important;
     }
   }
 
-  /* Mobile: hide gutter version */
+  /* MOBILE: Toggleable inline block */
   @media (max-width: 767px) {
     .sidenote-toggle {
       cursor: pointer;
+    }
+
+    .sidenote-content {
+      display: none;
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      background: var(--color-callout-bg);
+      border: var(--border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-3) var(--space-4);
+      margin: var(--space-3) 0;
+    }
+
+    .sidenote-content__number::before {
+      content: counter(sidenote-counter) ". ";
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    .sidenote-checkbox:checked ~ .sidenote-content {
+      display: block;
     }
   }
 </style>

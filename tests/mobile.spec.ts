@@ -4,30 +4,30 @@ import { test, expect } from '@playwright/test';
 test.use({ viewport: { width: 390, height: 844 } });
 
 test.describe('Mobile layout', () => {
-  test('sidenote gutter hidden on mobile', async ({ page }) => {
+  test('sidenote content hidden on mobile by default', async ({ page }) => {
     await page.goto('/dereferenced/geometry-of-attention');
 
-    // Sidenote gutter should be hidden on mobile
-    const sidenoteGutter = page.locator('.sidenote-gutter').first();
-    await expect(sidenoteGutter).toBeHidden();
+    // Sidenote content should be hidden on mobile initially
+    const sidenoteContent = page.locator('.sidenote-content').first();
+    await expect(sidenoteContent).toBeHidden();
   });
 
   test('sidenote toggle works on mobile', async ({ page }) => {
     await page.goto('/dereferenced/geometry-of-attention');
 
-    // Sidenote toggle should be visible
+    // Sidenote toggle should be visible (contains the superscript number)
     const sidenoteToggle = page.locator('.sidenote-toggle').first();
     await expect(sidenoteToggle).toBeVisible();
 
-    // Inline sidenote should be hidden initially
-    const sidenoteInline = page.locator('.sidenote-inline').first();
-    await expect(sidenoteInline).toBeHidden();
+    // Sidenote content should be hidden initially
+    const sidenoteContent = page.locator('.sidenote-content').first();
+    await expect(sidenoteContent).toBeHidden();
 
-    // Click the toggle
+    // Click the toggle (it's a label for a checkbox)
     await sidenoteToggle.click();
 
-    // Inline sidenote should now be visible
-    await expect(sidenoteInline).toBeVisible();
+    // Sidenote content should now be visible
+    await expect(sidenoteContent).toBeVisible();
   });
 
   test('sidebar TOC hidden on mobile', async ({ page }) => {
@@ -87,9 +87,13 @@ test.describe('Mobile layout', () => {
     const nav = page.locator('.nav');
     await expect(nav).toBeVisible();
 
-    // Logo symbol should be visible on mobile (text hidden)
-    const logoSymbol = page.locator('.nav__logo-symbol');
-    await expect(logoSymbol).toBeVisible();
+    // Logo should be visible and clickable
+    const logo = page.locator('.nav__logo');
+    await expect(logo).toBeVisible();
+
+    // Nav links should be accessible
+    const writingLink = page.locator('.nav__link', { hasText: 'writing' });
+    await expect(writingLink).toBeVisible();
   });
 
   test('article layout is single column on mobile', async ({ page }) => {

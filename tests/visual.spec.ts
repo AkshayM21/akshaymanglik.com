@@ -6,15 +6,17 @@ test.describe('Visual layout - Desktop', () => {
   test('sidenote visible in gutter on desktop', async ({ page }) => {
     await page.goto('/dereferenced/geometry-of-attention');
 
-    // Sidenote gutter should be visible on desktop
-    const sidenoteGutter = page.locator('.sidenote-gutter').first();
-    await expect(sidenoteGutter).toBeVisible();
+    // Wait for JS to teleport sidenotes to gutter
+    await page.waitForSelector('.sidenote-gutter-item', { timeout: 5000 });
 
-    // Should be positioned in the right column (grid-column: 3)
-    const gridColumn = await sidenoteGutter.evaluate(
-      (el) => window.getComputedStyle(el).gridColumn
-    );
-    expect(gridColumn).toContain('3');
+    // Sidenote gutter should be visible
+    const gutter = page.locator('.sidenotes-gutter');
+    await expect(gutter).toBeVisible();
+
+    // Should have gutter items
+    const gutterItems = page.locator('.sidenote-gutter-item');
+    const count = await gutterItems.count();
+    expect(count).toBeGreaterThan(0);
   });
 
   test('TOC visible in sidebar on desktop', async ({ page }) => {

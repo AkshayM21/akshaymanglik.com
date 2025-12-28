@@ -4,6 +4,7 @@ import Header from '@/components/global/Header.astro';
 import Footer from '@/components/global/Footer.astro';
 import Card from '@/components/global/Card.astro';
 import Remark42 from '@/components/comments/Remark42.astro';
+import NewsletterCard from '@/components/newsletter/NewsletterCard.astro';
 
 interface Heading {
   depth: number;
@@ -45,11 +46,12 @@ const showTOC = tocHeadings.length > 2;
       <Card class="card--article">
         <Header currentPath="/dereferenced" />
         <article class="article-layout">
-          <header class="article__header">
+          <header class="title-card">
             <div class="article__meta">
               {formattedPubDate}{category && ` · ${category}`} · {readingTime} min read
             </div>
             <h1 class="article__title">{title}</h1>
+            {description && <p class="article__subtitle">{description}</p>}
           </header>
 
           {/* Mobile TOC - shown above content on small screens */}
@@ -76,9 +78,11 @@ const showTOC = tocHeadings.length > 2;
           <section class="footnotes-section" id="footnotes-container" role="doc-endnotes">
           </section>
 
+          <NewsletterCard variant="article" />
+
           <Remark42 />
 
-          {/* Sidebar TOC - sticky on desktop */}
+          {/* Sidebar TOC - sticky on desktop (column 1) */}
           {showTOC && (
             <nav class="toc-sidebar" aria-label="Table of contents">
               <div class="toc-sidebar__title">Contents</div>
@@ -91,6 +95,11 @@ const showTOC = tocHeadings.length > 2;
               </ul>
             </nav>
           )}
+
+          {/* Sidenotes gutter - right column (column 3) */}
+          <aside class="sidenotes-gutter" aria-label="Sidenotes">
+            {/* Populated by JavaScript */}
+          </aside>
         </article>
         <Footer />
       </Card>
@@ -105,35 +114,127 @@ const showTOC = tocHeadings.length > 2;
 
     if (links.length === 0 || headings.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find intersecting entries sorted by their position on page
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    // Click handler - immediately highlight clicked link
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        links.forEach(l => l.classList.remove('toc-sidebar__link--active'));
+        link.classList.add('toc-sidebar__link--active');
+      });
+    });
 
-        if (visible.length > 0) {
-          // Highlight the topmost visible heading
-          const id = visible[0].target.id;
-          links.forEach(link => link.classList.remove('toc-sidebar__link--active'));
-          document.querySelector(`.toc-sidebar__link[href="#${id}"]`)?.classList.add('toc-sidebar__link--active');
+    // Scroll-based approach: highlight the heading the user is currently reading
+    function updateActiveLink() {
+      // Find the heading whose section is currently being read
+      // Logic: pick the last heading that is above a threshold (scrolled past)
+      // This ensures we're in the section that's currently at the top of viewport
+      const threshold = 300; // pixels from top where we consider "reading" the section
+
+      let activeHeading: Element | null = null;
+
+      for (const heading of Array.from(headings)) {
+        const rect = heading.getBoundingClientRect();
+
+        // If heading is at or above the threshold, we're in this section
+        if (rect.top <= threshold) {
+          activeHeading = heading;
+        } else {
+          // Once we find a heading below the threshold, stop
+          // (headings are in document order)
+          break;
         }
-      },
-      { rootMargin: '-10% 0% -70% 0%', threshold: 0 }
-    );
+      }
 
-    headings.forEach(h => observer.observe(h));
+      // If no heading has been scrolled past yet, use the first one if visible
+      if (!activeHeading && headings.length > 0) {
+        const firstRect = headings[0].getBoundingClientRect();
+        if (firstRect.top < window.innerHeight) {
+          activeHeading = headings[0];
+        }
+      }
+
+      // Fallback to first heading
+      if (!activeHeading && headings.length > 0) {
+        activeHeading = headings[0];
+      }
+
+      if (activeHeading) {
+        links.forEach(link => link.classList.remove('toc-sidebar__link--active'));
+        document.querySelector(`.toc-sidebar__link[href="#${activeHeading.id}"]`)?.classList.add('toc-sidebar__link--active');
+      }
+    }
+
+    // Throttled scroll handler
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateActiveLink();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Initialize on load
+    updateActiveLink();
+  }
+
+  function collectSidenotes() {
+    const gutter = document.querySelector('.sidenotes-gutter');
+    const sidenotes = document.querySelectorAll('[data-sidenote-id]');
+
+    if (!gutter) return;
+
+    // Only teleport on desktop (>=768px)
+    if (window.innerWidth < 768) {
+      gutter.innerHTML = '';
+      return;
+    }
+
+    if (sidenotes.length === 0) {
+      gutter.innerHTML = '';
+      return;
+    }
+
+    // Get gutter position for positioning reference
+    const gutterRect = gutter.getBoundingClientRect();
+
+    gutter.innerHTML = '';
+
+    sidenotes.forEach((sidenote, index) => {
+      const id = (sidenote as HTMLElement).dataset.sidenoteId;
+      const content = sidenote.querySelector('[data-sidenote-content]')?.innerHTML || '';
+
+      // Calculate vertical position relative to gutter, with offset to center with superscript line
+      const markerRect = sidenote.getBoundingClientRect();
+      const topOffset = markerRect.top - gutterRect.top - 12;
+
+      const item = document.createElement('div');
+      item.className = 'sidenote-gutter-item';
+      item.style.top = `${topOffset}px`;
+      item.innerHTML = `<span class="sidenote-gutter-item__number">${index + 1}.</span> ${content}`;
+
+      gutter.appendChild(item);
+    });
   }
 
   function collectFootnotes() {
     const container = document.getElementById('footnotes-container');
     const footnotes = document.querySelectorAll('[data-footnote-id]');
+    const acknowledgements = document.querySelector('.acknowledgements');
 
     if (!container) return;
 
-    if (footnotes.length === 0) {
+    if (footnotes.length === 0 && !acknowledgements) {
       container.remove();
       return;
+    }
+
+    // Move acknowledgements into footnotes container (before footnotes list)
+    let ackHTML = '';
+    if (acknowledgements) {
+      ackHTML = acknowledgements.outerHTML;
+      acknowledgements.remove();
     }
 
     // Build footnotes list from data attributes
@@ -149,10 +250,11 @@ const showTOC = tocHeadings.length > 2;
     // Sort by id numerically
     unique.sort((a, b) => parseInt(a.id || '0') - parseInt(b.id || '0'));
 
-    // Render if we have footnotes
-    if (unique.length > 0) {
-      container.innerHTML = `
-        <hr class="footnotes-divider" />
+    // Render: divider → acknowledgements → footnotes
+    container.innerHTML = `
+      <hr class="footnotes-divider" />
+      ${ackHTML}
+      ${unique.length > 0 ? `
         <h2 class="footnotes-title">Footnotes</h2>
         <ol class="footnotes-list">
           ${unique.map(fn => `
@@ -162,20 +264,36 @@ const showTOC = tocHeadings.length > 2;
             </li>
           `).join('')}
         </ol>
-      `;
-    } else {
+      ` : ''}
+    `;
+
+    // Remove container if nothing rendered
+    if (!ackHTML && unique.length === 0) {
       container.remove();
     }
   }
 
-  // Initialize on page load
+  // Initialize on page load - wait for fonts to ensure correct sidenote positioning
   initScrollSpy();
   collectFootnotes();
+  document.fonts.ready.then(() => {
+    collectSidenotes();
+  });
+
+  // Re-initialize on resize (handles mobile/desktop transition)
+  let resizeTimeout: ReturnType<typeof setTimeout>;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(collectSidenotes, 150);
+  });
 
   // Re-initialize on Astro page transitions
   document.addEventListener('astro:page-load', () => {
     initScrollSpy();
     collectFootnotes();
+    document.fonts.ready.then(() => {
+      collectSidenotes();
+    });
   });
 </script>
 

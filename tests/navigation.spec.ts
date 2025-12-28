@@ -33,22 +33,23 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL(/\/dereferenced/);
   });
 
-  test('logo shows asterisk on scroll', async ({ page }) => {
-    await page.goto('/dereferenced/geometry-of-attention');
+  test('logo has hover tooltip on desktop', async ({ page }) => {
+    await page.goto('/dereferenced');
 
-    const logoText = page.locator('.nav__logo-text');
-    const logoSymbol = page.locator('.nav__logo-symbol');
+    const logo = page.locator('.nav__logo');
+    const tooltip = page.locator('.nav__logo-tooltip');
 
-    // Before scroll - text visible
-    await expect(logoText).toBeVisible();
+    // Logo should be visible
+    await expect(logo).toBeVisible();
 
-    // Scroll down
-    await page.evaluate(() => window.scrollTo(0, 100));
-    await page.waitForTimeout(200);
+    // Tooltip exists but is hidden by default
+    await expect(tooltip).toBeAttached();
 
-    // After scroll - nav should have scrolled class
-    const nav = page.locator('.nav');
-    await expect(nav).toHaveClass(/nav--scrolled/);
+    // Hover over logo
+    await logo.hover();
+
+    // Tooltip should become visible on hover
+    await expect(tooltip).toBeVisible();
   });
 
   test('post cards link to articles', async ({ page }) => {

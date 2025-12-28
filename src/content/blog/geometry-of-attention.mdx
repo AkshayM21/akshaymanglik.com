@@ -9,8 +9,9 @@ tags: ["transformers", "attention", "deep learning"]
 import Callout from '@/components/mdx/Callout.astro';
 import Sidenote from '@/components/mdx/Sidenote.astro';
 import Footnote from '@/components/mdx/Footnote.astro';
+import Acknowledgements from '@/components/mdx/Acknowledgements.astro';
 
-When we talk about attention mechanisms in transformers, we often describe them algorithmically: queries, keys, values, softmax. But there's a deeper geometric intuition that makes the whole thing click.<Sidenote id="bahdanau">The original attention mechanism was introduced by Bahdanau et al. (2014) for neural machine translation, before transformers existed.</Sidenote>
+When we talk about attention mechanisms in transformers, we often describe them algorithmically: queries, keys, values, softmax. But there's a deeper geometric intuition that makes the whole thing click.<Sidenote id="1">The original attention mechanism was introduced by Bahdanau et al. (2014) for neural machine translation, before transformers existed.</Sidenote>
 
 Consider what's actually happening in the attention operation. Each token projects itself into three spaces—as a query asking "what should I attend to?", as a key advertising "here's what I contain", and as a value saying "here's what I contribute."
 
@@ -22,7 +23,7 @@ The softmax function isn't just a normalization trick—it's a *focusing mechani
 **Note:** The temperature parameter controls the entropy of this distribution. Lower temperatures mean sharper attention (approaching hard attention), while higher temperatures spread probability mass more uniformly.
 </Callout>
 
-This has implications for how we think about model capacity and the flow of information through layers. When attention is sharp, we're essentially doing [content-based addressing](https://en.wikipedia.org/wiki/Content-addressable_memory)—looking up specific information. When it's diffuse, we're aggregating across contexts.
+This has implications for how we think about model capacity and the flow of information through layers.<Sidenote id="2">Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions.</Sidenote> When attention is sharp, we're essentially doing [content-based addressing](https://en.wikipedia.org/wiki/Content-addressable_memory)—looking up specific information. When it's diffuse, we're aggregating across contexts.
 
 ## Mathematical Formulation
 
@@ -32,11 +33,11 @@ $$
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 $$
 
-where $Q$, $K$, and $V$ are the query, key, and value matrices respectively, and $d_k$ is the dimension of the keys.
+where $Q$, $K$, and $V$ are the query, key, and value matrices respectively, and $d_k$ is the dimension of the keys.<Footnote id="2">The scaling factor $\sqrt{d_k}$ prevents the dot products from growing too large, which would push softmax into regions with extremely small gradients.</Footnote>
 
 ## Why This Matters
 
-Understanding attention geometrically helps explain why transformers generalize so well across domains. The same mechanism that finds relevant words in a sentence can find relevant patches in an image or relevant timesteps in audio.
+Understanding attention geometrically helps explain why transformers generalize so well across domains. The same mechanism that finds relevant words in a sentence can find relevant patches in an image or relevant timesteps in audio.<Sidenote id="3">This universality is why the transformer architecture has become the backbone of modern AI, from GPT to DALL-E to Whisper.</Sidenote>
 
 The key insight is that attention is fundamentally about **learned routing**—dynamically deciding where information should flow based on content, not just position.
 
@@ -55,9 +56,6 @@ def scaled_dot_product_attention(Q, K, V):
 
 This is the core operation that powers everything from GPT to DALL-E to Whisper.
 
-
-## Why This Matters 2
-
-Understanding attention geometrically helps explain why transformers generalize so well across domains. The same mechanism that finds relevant words in a sentence can find relevant patches in an image or relevant timesteps in audio.
-
-The key insight is that attention is fundamentally about **learned routing**—dynamically deciding where information should flow based on content, not just position.
+<Acknowledgements>
+Thanks to [Reviewer 1] for helpful discussions on the geometric interpretation, and to [Reviewer 2] for feedback on early drafts of this post. Any errors remain my own.
+</Acknowledgements>

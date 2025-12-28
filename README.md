@@ -24,7 +24,6 @@ Visit at [akshaymanglik.com](https://akshaymanglik.com)
 - **Soft Neobrutalism Design**: Offset shadows, crisp borders, warm cream palette (#FAF8F5)
 - **Distill-style Sidenotes**: Margin notes on desktop, toggleable on mobile
 - **Footnote Tooltips**: Hover to preview, collected at article end
-- **Logo Animation**: Transitions from "dereferenced" to `*` on scroll
 - **Post Card Hover**: Pop-out effect with shadow animation
 - **Table of Contents**: Auto-generated with scroll spy
 - **RSS Feed**: Styled XML with custom XSL stylesheet

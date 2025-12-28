@@ -23,6 +23,7 @@
   /* Colors — Utility */
   --color-divider: #E5E5E5;
   --color-callout-bg: #FAF8F5;
+  --color-newsletter-bg: #F3F0EB;
 
   /* Typography — Font Families */
   --font-display: 'Literata', Georgia, serif;
@@ -69,10 +70,13 @@
 
   /* Layout — Fluid sizing */
   --container-width: min(900px, 95vw);
-  --article-container-width: min(1100px, 95vw);
+  --article-container-width: min(1200px, 95vw);
   --content-width: min(680px, 100%);
+  --sidebar-width: clamp(180px, 18vw, 240px);
+  --sidenote-column-width: clamp(220px, 20vw, 280px);
+  --sidenote-width: clamp(140px, 14vw, 180px);
   --gutter-width: clamp(180px, 18vw, 260px);
-  --article-gap: clamp(1rem, 3vw, 2rem);
+  --article-gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 /* ------------------------------------------------
@@ -134,7 +138,7 @@ body {
 
 .card--article {
   max-width: var(--article-container-width);
-  overflow: visible;
+  overflow: visible; /* Allow sticky positioning for TOC and sidenotes */
 }
 
 /* ------------------------------------------------
@@ -154,39 +158,52 @@ body {
   font-weight: 600;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: color 0.15s ease, opacity 0.15s ease;
+  transition: color 0.15s ease;
+  position: relative;
 }
 
 .nav__logo:hover {
   color: var(--color-accent);
 }
 
-/* Logo scroll state */
 .nav__logo-text {
   display: inline;
-  transition: opacity 0.2s ease;
 }
 
-.nav__logo-symbol {
-  display: none;
-  transition: opacity 0.2s ease;
+/* Hover tooltip with tagline */
+.nav__logo-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--color-card);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 100;
+  pointer-events: none;
 }
 
-.nav--scrolled .nav__logo-text {
-  display: none;
+.nav__logo:hover .nav__logo-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
-.nav--scrolled .nav__logo-symbol {
-  display: inline;
-}
-
-/* Mobile: always show symbol */
-@media (max-width: 480px) {
-  .nav__logo-text {
+/* Hide tooltip on mobile */
+@media (max-width: 767px) {
+  .nav__logo-tooltip {
     display: none;
-  }
-  .nav__logo-symbol {
-    display: inline;
   }
 }
 
@@ -205,7 +222,7 @@ body {
 }
 
 .nav__link:hover {
-  color: var(--color-text-primary);
+  color: var(--color-accent);
 }
 
 .nav__link--active {
@@ -219,44 +236,58 @@ body {
   display: grid;
   padding: var(--space-10) var(--space-6);
   counter-reset: sidenote-counter footnote-counter;
-  /* Three columns: left margin | content | gutter */
+  /* Asymmetric columns: TOC | content | sidenotes (wider) */
   grid-template-columns:
-    minmax(1rem, 1fr)
+    minmax(0, var(--sidebar-width))
     minmax(0, var(--content-width))
-    minmax(0, var(--gutter-width));
+    minmax(0, var(--sidenote-column-width));
   gap: 0 var(--article-gap);
+  max-width: calc(var(--sidebar-width) + var(--content-width) + var(--sidenote-column-width) + var(--article-gap) * 2);
+  margin: 0 auto;
 }
 
-/* Content spans main column */
+/* Content spans main column (column 2) */
 .article-layout > * {
   grid-column: 2;
 }
 
 /* Large screens: full 3-column layout */
-@media (min-width: 1100px) {
+@media (min-width: 1024px) {
   .article-layout {
     grid-template-columns:
-      1fr
-      var(--content-width)
-      var(--gutter-width);
+      minmax(0, var(--sidebar-width))
+      minmax(0, var(--content-width))
+      minmax(0, var(--sidenote-column-width));
   }
 }
 
-/* Medium screens: narrower gutter */
-@media (max-width: 1099px) and (min-width: 768px) {
+/* Medium screens: narrower sidebars */
+@media (max-width: 1023px) and (min-width: 768px) {
   .article-layout {
     grid-template-columns:
-      1rem
-      1fr
-      clamp(140px, 16vw, 200px);
+      clamp(120px, 12vw, 160px)
+      minmax(0, 1fr) /* minmax(0, 1fr) prevents content from expanding grid */
+      clamp(180px, 18vw, 240px);
   }
 }
 
 /* Small screens: single column */
 @media (max-width: 767px) {
   .article-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: var(--content-width);
     padding: var(--space-8) clamp(1rem, 5vw, 2rem);
+  }
+
+  /* Force all content to single column - need specificity for elements with explicit grid-column */
+  .article-layout > *,
+  .article-layout .title-card,
+  .article-layout .prose,
+  .article-layout .footnotes-section,
+  .article-layout .toc-mobile {
+    grid-column: 1 !important;
+    min-width: 0; /* Allow grid items to shrink below content size */
+    max-width: 100%; /* Prevent overflow */
   }
 }
 
@@ -268,18 +299,31 @@ body {
   counter-reset: sidenote-counter footnote-counter;
 }
 
+/* Title Card - styled header for article */
+.title-card {
+  grid-column: 2;
+  background: var(--color-newsletter-bg);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: var(--space-8);
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
 .article__header {
   margin-bottom: var(--space-8);
 }
 
 .article__meta {
   font-family: var(--font-body);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .article__title {
@@ -288,11 +332,23 @@ body {
   font-weight: 600;
   line-height: var(--leading-tight);
   color: var(--color-text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.article__subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  margin: 0;
 }
 
 @media (max-width: 640px) {
   .article__title {
     font-size: var(--text-3xl);
+  }
+
+  .title-card {
+    padding: 1.25rem 1.5rem;
   }
 }
 
@@ -304,6 +360,8 @@ body {
   font-size: var(--text-lg);
   line-height: var(--leading-relaxed);
   color: var(--color-text-secondary);
+  min-width: 0; /* Allow shrinking in grid */
+  overflow-wrap: break-word;
 }
 
 .prose p {
@@ -619,21 +677,27 @@ body {
   margin: var(--space-6) 0;
   overflow-x: auto;
   overflow-y: hidden;
+  max-width: 100%;
+  /* Prevent math from expanding grid columns */
+  contain: inline-size;
 }
 
 /* ------------------------------------------------
-   TOC — Sidebar Table of Contents
+   TOC — Sidebar Table of Contents (LEFT column)
    ------------------------------------------------ */
 .toc-sidebar {
-  grid-column: 3;
+  grid-column: 1;
   grid-row: 1 / -1;
+  justify-self: center;
   align-self: start;
   position: sticky;
   top: clamp(1.5rem, 4vh, 2.5rem);
   max-height: calc(100vh - 5rem);
   overflow-y: auto;
   font-size: clamp(0.8rem, 1.4vw, 0.875rem);
-  padding-right: var(--space-4);
+  text-align: left;
+  padding: 0 var(--space-3);
+  max-width: calc(var(--sidebar-width) - 2rem);
 }
 
 .toc-sidebar__title {
@@ -687,25 +751,46 @@ body {
 }
 
 /* ------------------------------------------------
-   SIDENOTE — Gutter Positioning
+   SIDENOTES GUTTER — Right sidebar (column 3)
    ------------------------------------------------ */
-.sidenote-gutter {
+.sidenotes-gutter {
   grid-column: 3;
+  grid-row: 1 / -1;
+  justify-self: start;
+  align-self: stretch; /* stretch to fill grid cell height (children are absolute) */
+  position: relative;
   font-size: clamp(0.8rem, 1.4vw, 0.875rem);
-  color: var(--color-text-secondary);
-  line-height: var(--leading-normal);
-  padding-right: var(--space-4);
+  padding: 0;
+  padding-left: clamp(0.75rem, 2vw, 1.5rem); /* Responsive spacing from main text */
+  width: 100%; /* Fill grid column (otherwise collapses with absolute children) */
+  max-width: var(--sidenote-column-width);
+  display: none;
 }
 
-.sidenote-gutter__number {
+@media (min-width: 768px) {
+  .sidenotes-gutter {
+    display: block;
+  }
+}
+
+.sidenote-gutter-item {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: var(--space-2) 0;
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  font-size: 0.85rem;
+}
+
+.sidenote-gutter-item__number {
   font-weight: 600;
   color: var(--color-accent);
-  margin-right: var(--space-1);
 }
 
-/* Hide gutter sidenotes on mobile */
+/* Hide gutter on mobile */
 @media (max-width: 767px) {
-  .sidenote-gutter {
+  .sidenotes-gutter {
     display: none;
   }
 }
