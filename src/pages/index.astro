@@ -1,5 +1,244 @@
 ---
-// Redirect root path to /about
-// This generates index.html which handles the redirect
-return Astro.redirect('/about', 301);
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/global/Header.astro';
+import Footer from '@/components/global/Footer.astro';
+import Card from '@/components/global/Card.astro';
 ---
+
+<BaseLayout title="About — Akshay Manglik" description="Applied AI Engineer at Scale AI. Columbia grad. Writing about technology, politics, and economics." image="/og/index.png">
+  <div class="page">
+    <div class="container">
+      <Card>
+        <Header currentPath="/" />
+        <article class="article">
+          <header class="article__header">
+            <h1 class="article__title">About</h1>
+          </header>
+          <div class="prose">
+            <div class="about-intro">
+              <img
+                src="/assets/profile-pics/pfp.jpeg"
+                alt="Akshay Manglik"
+                class="about-photo"
+              />
+              <div class="about-text">
+                <p>
+                  I'm <strong>Akshay Manglik</strong>, an Applied AI Engineer at <a href="https://scale.com" target="_blank" rel="noopener" class="connect-link">Scale AI</a>.
+                </p>
+                <p>
+                  I graduated from Columbia University in 2025 with a B.A. in Computer Science and Economics, and a minor in Mathematics.
+                </p>
+                <p>
+                  I'm interested in designing adaptive systems capable of learning and self-correcting over time, with minimal human intervention.
+                </p>
+                </div>
+            </div>
+
+            <p>
+              <a href="/dereferenced" rel="noopener" class="connect-link">
+                Dereferenced</a> is my blog about the intersection of technology, economics, and philosophy. I'm especially interested in understanding complex systems from the ground up, whether those be market systems, technological systems, or systems of ideas. Feel free to reach out to chat or with feedback on my writing!
+            </p>
+
+            <h2>Connect</h2>
+            <div class="connect-links">
+              <a href="https://twitter.com/akshay_manglik" target="_blank" rel="noopener" class="connect-link">
+                Twitter
+              </a>
+              <a href="https://www.linkedin.com/in/akshay-manglik/" target="_blank" rel="noopener" class="connect-link">
+                LinkedIn
+              </a>
+              <a href="https://github.com/AkshayM21" target="_blank" rel="noopener" class="connect-link">
+                GitHub
+              </a>
+            </div>
+
+            <h2>Projects</h2>
+
+            <div class="featured-projects">
+              <!-- movies-db -->
+              <div class="project-card">
+                <div class="project-card__header">
+                  <span class="project-card__title">movies-db</span>
+                  <div class="project-card__links">
+                    <a href="https://github.com/AkshayM21/movies-db" class="project-card__link" target="_blank" rel="noopener">GitHub ↗</a>
+                  </div>
+                </div>
+                <p class="project-card__desc">A Letterboxd-like interface with an LLM that recommends movies based on your watchlist. Includes personal ratings, reviews, and AI-powered discovery.</p>
+                <div class="project-card__tags">
+                  <span class="tag tag--web">Web</span>
+                  <span class="tag tag--llm">LLM</span>
+                  <span class="tag tag--progress">In Progress</span>
+                </div>
+              </div>
+
+              <!-- Test-Time Observational Scaling -->
+              <div class="project-card">
+                <div class="project-card__header">
+                  <span class="project-card__title">Test-Time Observational Scaling</span>
+                  <div class="project-card__links">
+                    <a href="https://github.com/AkshayM21/obs-scaling-inference-opts" class="project-card__link" target="_blank" rel="noopener">GitHub ↗</a>
+                    <a href="https://github.com/AkshayM21/obs-scaling-inference-opts/blob/main/When%20to%20Think%20Step%20By%20Step%20-%20Manglik,%20Choudhri.pdf" class="project-card__link" target="_blank" rel="noopener">Paper ↗</a>
+                  </div>
+                </div>
+                <p class="project-card__desc">Developing model and data scaling laws for test-time search and sampling methods on reasoning benchmarks, for 400M–72B parameter models.</p>
+                <div class="project-card__tags">
+                  <span class="tag tag--research">Research</span>
+                  <span class="tag tag--ml">ML</span>
+                </div>
+              </div>
+
+              <!-- SafeSip -->
+              <div class="project-card">
+                <div class="project-card__header">
+                  <span class="project-card__title">SafeSip</span>
+                  <div class="project-card__links">
+                    <a href="https://github.com/aakritil/SafeSip" class="project-card__link" target="_blank" rel="noopener">GitHub ↗</a>
+                  </div>
+                </div>
+                <p class="project-card__desc">AI-powered iOS app promoting alcohol safety via real-time blood alcohol concentration estimation. Created model to predict BAC from movement data using CNNs.</p>
+                <div class="project-card__tags">
+                  <span class="tag tag--mobile">iOS</span>
+                  <span class="tag tag--ml">ML</span>
+                </div>
+              </div>
+
+              <!-- spanish-conj -->
+              <div class="project-card">
+                <div class="project-card__header">
+                  <span class="project-card__title">spanish-conj</span>
+                  <div class="project-card__links">
+                    <a href="https://github.com/AkshayM21/spanish-conj" class="project-card__link" target="_blank" rel="noopener">GitHub ↗</a>
+                    <a href="https://spanish-conj.vercel.app/" class="project-card__link" target="_blank" rel="noopener">Site ↗</a>
+                  </div>
+                </div>
+                <p class="project-card__desc">A study and practice tool for Spanish verb conjugation with per-tense spaced repetition and optional LLM feedback for explanations and corrections.</p>
+                <div class="project-card__tags">
+                  <span class="tag tag--web">Web</span>
+                  <span class="tag tag--llm">LLM</span>
+                  <span class="tag tag--live">Live</span>
+                </div>
+              </div>
+
+              <!-- Voter Ready -->
+              <div class="project-card">
+                <div class="project-card__header">
+                  <span class="project-card__title">Voter Ready</span>
+                  <div class="project-card__links">
+                    <a href="https://github.com/AkshayM21/Voter-Ready" class="project-card__link" target="_blank" rel="noopener">GitHub ↗</a>
+                  </div>
+                </div>
+                <p class="project-card__desc">Android app that scrapes information about your California ballot and provides comprehensive, verified information about candidates' backgrounds and political stances.</p>
+                <div class="project-card__tags">
+                  <span class="tag tag--mobile">Android</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Projects -->
+            <div class="other-projects">
+              <div class="other-projects__title">Other Projects</div>
+              <div class="project-list">
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/twitter-clipboard" class="project-list-item__name" target="_blank" rel="noopener">twitter-clipboard ↗</a>
+                  <span class="project-list-item__desc">Browser extension for copying Twitter threads in LLM-friendly format</span>
+                </div>
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/python-mcp" class="project-list-item__name" target="_blank" rel="noopener">python-mcp ↗</a>
+                  <span class="project-list-item__desc">MCP server for executing Python code with security restrictions</span>
+                </div>
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/akshaymanglik.com" class="project-list-item__name" target="_blank" rel="noopener">akshaymanglik.com ↗</a>
+                  <span class="project-list-item__desc">This site's stack + custom Remark42 styling</span>
+                </div>
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/rowingdata" class="project-list-item__name" target="_blank" rel="noopener">StrokeInsights ↗</a>
+                  <span class="project-list-item__desc">Performance data analysis app for practice machines for Columbia Rowing</span>
+                </div>
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/srp2018" class="project-list-item__name" target="_blank" rel="noopener">Breast Cancer Detection ↗</a>
+                  <span class="project-list-item__desc">CNN algorithm to detect and segment tumors in mammograms (96% TPR)</span>
+                </div>
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/Illuminode" class="project-list-item__name" target="_blank" rel="noopener">Illuminode ↗</a>
+                  <span class="project-list-item__desc">Collaborative real-time story writing, one sentence at a time</span>
+                </div>
+                <div class="project-list-item">
+                  <a href="https://github.com/AkshayM21/Charity-Channel" class="project-list-item__name" target="_blank" rel="noopener">Charity Channel ↗</a>
+                  <span class="project-list-item__desc">App connecting users with Bay Area charities by topic and resource preferences</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <Footer />
+      </Card>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-intro {
+    display: flex;
+    gap: var(--space-6);
+    align-items: center;
+    margin-bottom: var(--space-4);
+  }
+
+  .about-photo {
+    width: 148px;
+    height: 148px;
+    border-radius: var(--radius-md);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .about-text {
+    flex: 1;
+  }
+
+  .about-text p {
+    margin-bottom: var(--space-3);
+  }
+
+  .about-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .connect-links {
+    display: flex;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+
+  .connect-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .connect-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .about-intro {
+      flex-direction: column;
+      align-items: flex-start;
+      /* Removed text-align: center - keep text left-justified */
+    }
+
+    .about-photo {
+      width: 120px;
+      height: 120px;
+    }
+
+    .connect-links {
+      justify-content: center;
+    }
+  }
+</style>

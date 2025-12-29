@@ -6,6 +6,12 @@ import path from 'node:path';
 export const prerender = true;
 
 export const GET: APIRoute = async () => {
+  // Load fonts
+  const fontsDir = path.join(process.cwd(), 'public/fonts');
+  const ibmPlexRegular = fs.readFileSync(path.join(fontsDir, 'IBMPlexSans-Regular.ttf'));
+  const ibmPlexSemiBold = fs.readFileSync(path.join(fontsDir, 'IBMPlexSans-SemiBold.ttf'));
+  const literataSemiBold = fs.readFileSync(path.join(fontsDir, 'Literata-SemiBold.ttf'));
+
   // Load the profile image
   const imagePath = path.join(process.cwd(), 'public/assets/profile-pics/pfp.jpeg');
   const imageData = fs.readFileSync(imagePath);
@@ -20,8 +26,8 @@ export const GET: APIRoute = async () => {
         width: '100%',
         height: '100%',
         backgroundColor: '#FAF8F5',
-        padding: '60px',
-        fontFamily: 'Georgia, serif',
+        padding: '32px',
+        fontFamily: 'IBM Plex Sans, sans-serif',
       },
       children: [
         {
@@ -31,12 +37,12 @@ export const GET: APIRoute = async () => {
               display: 'flex',
               flexDirection: 'row',
               flex: 1,
-              border: '4px solid #1A1A1A',
-              borderRadius: '24px',
+              border: '1px solid #1A1A1A',
+              borderRadius: '14px',
               backgroundColor: '#FFFFFF',
-              padding: '48px',
-              boxShadow: '8px 8px 0 #1A1A1A',
-              gap: '48px',
+              padding: '40px',
+              boxShadow: '3px 3px 0 #1A1A1A',
+              gap: '40px',
               alignItems: 'center',
             },
             children: [
@@ -63,12 +69,12 @@ export const GET: APIRoute = async () => {
                             props: {
                               style: {
                                 position: 'absolute',
-                                top: '8px',
-                                left: '8px',
-                                width: '220px',
-                                height: '220px',
+                                top: '3px',
+                                left: '3px',
+                                width: '300px',
+                                height: '300px',
                                 backgroundColor: '#1A1A1A',
-                                borderRadius: '16px',
+                                borderRadius: '10px',
                               },
                             },
                           },
@@ -77,13 +83,13 @@ export const GET: APIRoute = async () => {
                             type: 'img',
                             props: {
                               src: base64Image,
-                              width: 220,
-                              height: 220,
+                              width: 300,
+                              height: 300,
                               style: {
                                 position: 'relative',
                                 objectFit: 'cover',
-                                borderRadius: '16px',
-                                border: '3px solid #1A1A1A',
+                                borderRadius: '10px',
+                                border: '1px solid #1A1A1A',
                               },
                             },
                           },
@@ -104,16 +110,17 @@ export const GET: APIRoute = async () => {
                     justifyContent: 'center',
                   },
                   children: [
-                    // "dereferenced" - black, lowercase, Literata style
+                    // "dereferenced" logo
                     {
                       type: 'div',
                       props: {
                         style: {
-                          fontSize: '20px',
+                          fontSize: '28px',
                           fontWeight: 600,
                           color: '#1A1A1A',
+                          fontFamily: 'Literata, serif',
                           letterSpacing: '0.02em',
-                          marginBottom: '24px',
+                          marginBottom: '20px',
                         },
                         children: 'dereferenced',
                       },
@@ -123,11 +130,11 @@ export const GET: APIRoute = async () => {
                       type: 'div',
                       props: {
                         style: {
-                          fontSize: '28px',
+                          fontSize: '36px',
                           fontWeight: 400,
                           color: '#1A1A1A',
-                          lineHeight: 1.4,
-                          fontFamily: 'system-ui, -apple-system, sans-serif',
+                          lineHeight: 1.3,
+                          fontFamily: 'IBM Plex Sans, sans-serif',
                         },
                         children: "I'm Akshay Manglik, an Applied AI Engineer at Scale AI.",
                       },
@@ -137,14 +144,14 @@ export const GET: APIRoute = async () => {
                       type: 'div',
                       props: {
                         style: {
-                          fontSize: '22px',
+                          fontSize: '26px',
                           fontWeight: 400,
                           color: '#4A4A4A',
-                          lineHeight: 1.5,
+                          lineHeight: 1.4,
                           marginTop: '16px',
-                          fontFamily: 'system-ui, -apple-system, sans-serif',
+                          fontFamily: 'IBM Plex Sans, sans-serif',
                         },
-                        children: 'I graduated from Columbia University in 2025 with a B.A. in Computer Science and Economics, and a minor in Mathematics.',
+                        children: 'Columbia 2025 — CS, Economics, Math minor.',
                       },
                     },
                   ],
@@ -160,5 +167,10 @@ export const GET: APIRoute = async () => {
   return new ImageResponse(html as any, {
     width: 1200,
     height: 630,
+    fonts: [
+      { name: 'IBM Plex Sans', data: ibmPlexRegular, weight: 400 },
+      { name: 'IBM Plex Sans', data: ibmPlexSemiBold, weight: 600 },
+      { name: 'Literata', data: literataSemiBold, weight: 600 },
+    ],
   });
 };

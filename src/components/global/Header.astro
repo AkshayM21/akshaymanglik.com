@@ -4,23 +4,27 @@ interface Props {
 }
 
 const { currentPath = '' } = Astro.props;
+const isHomePage = currentPath === '/';
+const logoText = isHomePage ? 'akshay manglik' : 'dereferenced';
+const logoHref = isHomePage ? '/' : '/dereferenced';
+const logoTooltip = isHomePage ? 'Applied AI Engineer' : 'Ideas, traced to source';
 ---
 
 <nav class="nav" id="main-nav">
-  <a href="/dereferenced" class="nav__logo">
-    <span class="nav__logo-text">dereferenced</span>
-    <span class="nav__logo-tooltip">Ideas, traced to source</span>
+  <a href={logoHref} class="nav__logo">
+    <span class="nav__logo-text">{logoText}</span>
+    <span class="nav__logo-tooltip">{logoTooltip}</span>
   </a>
   <div class="nav__links">
     <a
       href="/dereferenced"
-      class:list={["nav__link", { "nav__link--active": currentPath.includes('/dereferenced') || currentPath === '/' }]}
+      class:list={["nav__link", { "nav__link--active": currentPath.includes('/dereferenced') }]}
     >
       writing
     </a>
     <a
-      href="/about"
-      class:list={["nav__link", { "nav__link--active": currentPath === '/about' }]}
+      href="/"
+      class:list={["nav__link", { "nav__link--active": currentPath === '/' }]}
     >
       about
     </a>
