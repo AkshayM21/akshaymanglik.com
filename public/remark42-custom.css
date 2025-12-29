@@ -3,8 +3,8 @@
    Soft Neobrutalism Design System
    ================================================ */
 
-/* Import IBM Plex Sans and Literata fonts */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap');
+/* Import IBM Plex Sans font */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 /* ------------------------------------------------
    CSS Variables Override
@@ -99,19 +99,35 @@ textarea {
 }
 
 /* ------------------------------------------------
-   Secondary/Link Buttons
+   Secondary/Link Buttons (Reply, Edit, etc.)
+   Smaller subtle red pills with white text
    ------------------------------------------------ */
 .button_kind_link,
 .C_G,
 .C_H {
-  color: rgb(220, 38, 38) !important;
+  background-color: rgb(220, 38, 38) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 4px !important;
+  padding: 6px 12px !important;
+  font-size: 0.8rem !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
 }
 
 .button_kind_link:hover,
 .C_G:hover,
 .C_H:hover {
-  color: rgb(185, 28, 28) !important;
-  background-color: rgba(220, 38, 38, 0.1) !important;
+  background-color: rgb(220, 38, 38) !important;
+  color: #FFFFFF !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 2px 2px 0 #1A1A1A !important;
+}
+
+.button_kind_link:active,
+.C_G:active,
+.C_H:active {
+  transform: translate(0, 0) !important;
+  box-shadow: none !important;
 }
 
 /* ------------------------------------------------
@@ -178,17 +194,18 @@ textarea {
   background: #FFFFFF !important;
 }
 
-/* Send button */
+/* Send button - Red bg, White text, same style as Sign In */
 .comment-form__button_type_send {
   background: rgb(220, 38, 38) !important;
   border: 1px solid #1A1A1A !important;
   border-radius: 6px !important;
   color: #FFFFFF !important;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease !important;
+  font-weight: 600 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
 }
 
 .comment-form__button_type_send:hover {
-  background: rgb(185, 28, 28) !important;
+  background: rgb(220, 38, 38) !important;
   transform: translate(-2px, -2px) !important;
   box-shadow: 3px 3px 0 #1A1A1A !important;
 }
@@ -199,15 +216,16 @@ textarea {
 }
 
 .comment-form__button_type_send:focus {
-  background: rgb(185, 28, 28) !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.4) !important;
 }
 
-/* Preview button */
+/* Preview button - White bg, Red text, same style as Sign In */
 .comment-form__button_type_preview {
   background: #FFFFFF !important;
   border: 1px solid #1A1A1A !important;
   border-radius: 6px !important;
-  color: #1A1A1A !important;
+  color: rgb(220, 38, 38) !important;
+  font-weight: 600 !important;
   transition: transform 0.1s ease, box-shadow 0.1s ease !important;
 }
 
@@ -332,12 +350,12 @@ a:hover {
   color: #1A1A1A !important;
 }
 
-/* Username styling - Literata font, black color */
+/* Username styling - IBM Plex Sans, black color */
 .comment__username,
 .auth-panel__username,
 .settings__username,
 .E_A {
-  font-family: 'Literata', Georgia, serif !important;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
   color: #1A1A1A !important;
   font-weight: 600 !important;
 }

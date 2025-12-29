@@ -19,9 +19,8 @@ const { id } = Astro.props;
 <style>
   .sidenote {
     counter-increment: sidenote-counter;
-    display: inline-flex;
-    vertical-align: baseline;
-    line-height: 1;
+    display: inline;
+    position: relative;
   }
 
   .sidenote-checkbox {
@@ -61,8 +60,8 @@ const { id } = Astro.props;
       background: var(--color-callout-bg);
       border: var(--border);
       border-radius: var(--radius-sm);
-      padding: var(--space-3) var(--space-4);
-      margin: var(--space-3) 0;
+      padding: var(--space-4) var(--space-5);
+      margin: var(--space-4) 0;
     }
 
     .sidenote-content__number::before {
@@ -73,6 +72,7 @@ const { id } = Astro.props;
 
     .sidenote-checkbox:checked ~ .sidenote-content {
       display: block;
+      clear: both;
     }
   }
 </style>
