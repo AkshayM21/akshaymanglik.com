@@ -3,6 +3,7 @@
     { "source": "/blog/:path*", "destination": "/dereferenced/:path*" }
   ],
   "redirects": [
+    { "source": "/", "destination": "/about", "permanent": true },
     { "source": "/feed", "destination": "/rss.xml", "permanent": true },
     { "source": "/feed.xml", "destination": "/rss.xml", "permanent": true }
   ],
