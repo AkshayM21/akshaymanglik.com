@@ -33,13 +33,15 @@ npm run newsletter <slug>
 src/
 ├── components/
 │   ├── global/         # Header, Footer, Card
-│   ├── blog/           # PostCard
+│   ├── blog/           # PostCard, TOC
 │   ├── mdx/            # Sidenote, Footnote, Callout, Figure
+│   ├── newsletter/     # NewsletterCard, InlineSubscribe
 │   └── comments/       # Remark42
 ├── layouts/            # BaseLayout, BlogLayout
 ├── pages/
+│   ├── api/            # Newsletter subscribe, webhooks
 │   ├── dereferenced/   # Blog index + [...slug].astro
-│   ├── og/             # OG image generation
+│   ├── og/             # OG image generation (about, dereferenced, [slug])
 │   ├── about.astro
 │   ├── index.astro     # Redirects to /about
 │   └── rss.xml.ts
@@ -120,18 +122,34 @@ Text with a footnote<Footnote id="1">This shows on hover and in the footnotes se
 - `/blog/*` - Rewrites to `/dereferenced/*` (via vercel.json)
 - `/about` - About page
 - `/rss.xml` - RSS feed
-- `/og/<slug>.png` - Generated OG images
+- `/og/<slug>.png` - Generated OG images for posts
+- `/og/about.png` - OG image for about page
+- `/og/dereferenced.png` - OG image for blog index
+
+## OG Image Generation
+
+Dynamic OG images are generated using `@vercel/og` (Satori). Located in `src/pages/og/`:
+
+| File | Purpose |
+|------|---------|
+| `[...slug].png.ts` | Blog post OG - shows "dereferenced", date, category, title, description |
+| `about.png.ts` | About page OG - profile photo with bio text side-by-side |
+| `dereferenced.png.ts` | Blog index OG - shows 2 most recent post titles as mini cards |
+
+All OG images use neobrutalist styling with black borders, offset shadows, and the cream/white color palette.
 
 ## Comments (Remark42)
 
 Comments use Remark42 self-hosted on Railway.app. Configure via environment variables:
 
 ```bash
-PUBLIC_REMARK42_HOST=https://comments.akshaymanglik.com
+PUBLIC_REMARK42_HOST=https://comments.yourdomain.com
 PUBLIC_REMARK42_SITE_ID=dereferenced
 ```
 
 The Remark42.astro component injects custom CSS to match the design system.
+
+**Custom CSS Theme**: See [remark42-dereferenced](https://github.com/AkshayM21/remark42-dereferenced) for the custom CSS that styles Remark42 to match the blog's neobrutalist aesthetic.
 
 ## Newsletter (Kit + Firebase)
 
@@ -167,7 +185,7 @@ curl -X POST https://api.convertkit.com/v3/automations/hooks \
   -H 'Content-Type: application/json' \
   -d '{
     "api_secret": "<KIT_API_SECRET>",
-    "target_url": "https://akshaymanglik.com/api/webhooks/kit?secret=<KIT_WEBHOOK_SECRET>",
+    "target_url": "https://yourdomain.com/api/webhooks/kit?secret=<KIT_WEBHOOK_SECRET>",
     "event": { "name": "subscriber.subscriber_unsubscribe" }
   }'
 ```
@@ -179,7 +197,7 @@ curl -X POST https://api.convertkit.com/v3/automations/hooks \
 
 ## Deployment
 
-Deploy to Vercel with the Astro adapter. The `vercel.json` handles:
+Deploy to Vercel with the Astro adapter (`output: 'hybrid'` for serverless API routes). The `vercel.json` handles:
 - `/blog/*` → `/dereferenced/*` rewrites
 - RSS feed headers
 - Security headers
@@ -187,9 +205,9 @@ Deploy to Vercel with the Astro adapter. The `vercel.json` handles:
 ### DNS (to configure at registrar)
 
 ```
-A     akshaymanglik.com        76.76.21.21 (Vercel)
-CNAME blog.akshaymanglik.com   cname.vercel-dns.com
-CNAME comments.akshaymanglik.com  <railway-cname>
+A     yourdomain.com        76.76.21.21 (or IP from Vercel dashboard)
+CNAME blog.yourdomain.com   cname.vercel-dns.com
+CNAME comments.yourdomain.com  <railway-cname>
 ```
 
 ## Article Layout Architecture
@@ -233,14 +251,20 @@ GitHub Actions workflow (`.github/workflows/test.yml`) runs on push and PR:
 - Runs all Playwright tests
 - Uploads test report artifacts
 
+## Related Repositories
+
+- [remark42-dereferenced](https://github.com/AkshayM21/remark42-dereferenced) — Custom CSS theme for Remark42 comments matching the blog's neobrutalist design
+
 ## Files Reference
 
 | File | Purpose |
 |------|---------|
-| `astro.config.mjs` | Astro + MDX + math plugins |
+| `astro.config.mjs` | Astro + MDX + math plugins, hybrid output mode |
 | `src/styles/global.css` | All design tokens and component styles |
 | `src/layouts/BlogLayout.astro` | Article page with grid layout, TOC, footnotes |
 | `src/components/mdx/Sidenote.astro` | Margin notes (gutter on desktop, toggle on mobile) |
 | `src/components/mdx/Footnote.astro` | Footnotes with hover tooltips |
+| `src/pages/og/*.ts` | OG image generation endpoints |
+| `src/pages/api/subscribe.ts` | Newsletter subscribe API |
 | `vercel.json` | Rewrites, redirects, headers |
 | `.github/workflows/test.yml` | CI/CD test workflow |

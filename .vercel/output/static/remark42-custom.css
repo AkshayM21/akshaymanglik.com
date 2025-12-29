@@ -1,0 +1,515 @@
+/* ================================================
+   Remark42 Custom Styles — Dereferenced Theme
+   Soft Neobrutalism Design System
+   ================================================ */
+
+/* Import IBM Plex Sans font */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+/* ------------------------------------------------
+   CSS Variables Override
+   ------------------------------------------------ */
+:root {
+  /* Primary colors — Crimson accent */
+  --primary-color: 220, 38, 38;
+  --primary-brighter-color: 185, 28, 28;
+  --primary-darker-color: 153, 27, 27;
+
+  /* Text colors */
+  --primary-text-color: 26, 26, 26;
+  --secondary-text-color: 74, 74, 74;
+  --secondary-darker-text-color: 107, 107, 107;
+
+  /* Background */
+  --primary-background-color: 255, 255, 255;
+  --white-color: 255, 255, 255;
+  --black-color: 26, 26, 26;
+
+  /* Borders and lines */
+  --line-color: #E5E5E5;
+  --line-brighter-color: #D4D4D4;
+
+  /* Error colors */
+  --error-color: #B91C1C;
+  --error-background: rgba(185, 28, 28, 0.1);
+
+  /* Override teal colors to crimson */
+  --color9: #DC2626;
+  --color15: #DC2626;
+  --color33: #B91C1C;
+  --color40: rgba(220, 38, 38, 0.3);
+  --color42: rgba(220, 38, 38, 0.15);
+  --color43: rgba(220, 38, 38, 0.2);
+  --color47: rgba(220, 38, 38, 0.4);
+  --color48: rgba(220, 38, 38, 0.6);
+}
+
+/* ------------------------------------------------
+   Typography
+   ------------------------------------------------ */
+body {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.root,
+.auth-panel,
+.comment,
+.comment__input,
+.comment-form,
+.comment-form__field,
+button,
+input,
+select,
+textarea {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ------------------------------------------------
+   Primary Button (Sign In) — Neobrutalist Style
+   ------------------------------------------------ */
+.C_A {
+  background-color: rgb(220, 38, 38) !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease !important;
+}
+
+.C_A:hover {
+  background-color: rgb(185, 28, 28) !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 3px 3px 0 #1A1A1A !important;
+}
+
+.C_A:active {
+  transform: translate(0, 0) !important;
+  box-shadow: none !important;
+}
+
+.C_A:focus {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.4) !important;
+  outline: none !important;
+}
+
+/* Dropdown button divider */
+.C_B:before {
+  border-left-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ------------------------------------------------
+   Secondary/Link Buttons (Reply, Edit, etc.)
+   Smaller subtle red pills with white text
+   ------------------------------------------------ */
+.button_kind_link,
+.C_G,
+.C_H {
+  background-color: rgb(220, 38, 38) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 4px !important;
+  padding: 6px 12px !important;
+  font-size: 0.8rem !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.button_kind_link:hover,
+.C_G:hover,
+.C_H:hover {
+  background-color: rgb(220, 38, 38) !important;
+  color: #FFFFFF !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 2px 2px 0 #1A1A1A !important;
+}
+
+.button_kind_link:active,
+.C_G:active,
+.C_H:active {
+  transform: translate(0, 0) !important;
+  box-shadow: none !important;
+}
+
+/* ------------------------------------------------
+   Form Input Fields
+   ------------------------------------------------ */
+.S_A,
+.comment-form__field,
+.N_M {
+  border: 1px solid #1A1A1A !important;
+  border-radius: 10px !important;
+  background: #FFFFFF !important;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.S_A:hover,
+.comment-form__field:hover,
+.N_M:hover {
+  border-color: #1A1A1A !important;
+}
+
+.S_A:focus,
+.comment-form__field:focus,
+.N_M:focus {
+  border-color: rgb(220, 38, 38) !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2) !important;
+  outline: none !important;
+}
+
+/* ------------------------------------------------
+   Comment Form Container
+   ------------------------------------------------ */
+.comment-form {
+  border-radius: 10px !important;
+  border: none !important;
+  background: #FFFFFF !important;
+}
+
+.comment-form_theme_light {
+  background: #FFFFFF !important;
+  border: none !important;
+}
+
+.comment-form_theme_light .comment-form__actions {
+  background: #FFFFFF !important;
+}
+
+.comment-form_theme_light .comment-form__control-panel {
+  background-color: #FFFFFF !important;
+}
+
+.comment-form_theme_light .comment-form__field {
+  background: #FFFFFF !important;
+  color: #1A1A1A !important;
+}
+
+/* Preview area */
+.comment-form_theme_light .comment-form__preview {
+  background: #FFFFFF !important;
+  border-color: #E5E5E5 !important;
+  color: #1A1A1A !important;
+}
+
+.comment-form_theme_light .comment-form__preview-wrapper {
+  background: #FFFFFF !important;
+}
+
+/* Send button - Red bg, White text, same style as Sign In */
+.comment-form__button_type_send {
+  background: rgb(220, 38, 38) !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 6px !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.comment-form__button_type_send:hover {
+  background: rgb(220, 38, 38) !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 3px 3px 0 #1A1A1A !important;
+}
+
+.comment-form__button_type_send:active {
+  transform: translate(0, 0) !important;
+  box-shadow: none !important;
+}
+
+.comment-form__button_type_send:focus {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.4) !important;
+}
+
+/* Preview button - White bg, Red text, same style as Sign In */
+.comment-form__button_type_preview {
+  background: #FFFFFF !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 6px !important;
+  color: rgb(220, 38, 38) !important;
+  font-weight: 600 !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.comment-form__button_type_preview:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 3px 3px 0 #1A1A1A !important;
+}
+
+.comment-form__button_type_preview:active {
+  transform: translate(0, 0) !important;
+  box-shadow: none !important;
+}
+
+.comment-form__button_type_preview:focus {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.4) !important;
+}
+
+/* Toolbar icons */
+.comment-form__toolbar-item {
+  color: #4A4A4A !important;
+}
+
+.comment-form__toolbar-item:hover {
+  color: rgb(220, 38, 38) !important;
+}
+
+/* ------------------------------------------------
+   Links
+   ------------------------------------------------ */
+a {
+  color: rgb(220, 38, 38) !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  color: rgb(185, 28, 28) !important;
+}
+
+/* RSS and markdown links */
+.comment-form__rss-link,
+.comment-form__markdown-link,
+.comment-form__rss-dropdown__link {
+  color: rgb(220, 38, 38) !important;
+  font-weight: 600 !important;
+}
+
+.comment-form__rss-link:hover,
+.comment-form__markdown-link:hover,
+.comment-form__rss-dropdown__link:hover {
+  color: rgb(185, 28, 28) !important;
+}
+
+/* ------------------------------------------------
+   Auth Panel (OAuth providers)
+   ------------------------------------------------ */
+.R_C {
+  border: 1px solid #1A1A1A !important;
+  border-radius: 50% !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.R_C:hover {
+  border-color: #1A1A1A !important;
+  transform: translate(-2px, -2px) scale(1) !important;
+  box-shadow: 2px 2px 0 #1A1A1A !important;
+}
+
+.R_C:focus {
+  border-color: #1A1A1A !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* Provider buttons with text */
+.R_D,
+.R_E {
+  border: 1px solid #1A1A1A !important;
+  border-radius: 6px !important;
+}
+
+.R_D:hover,
+.R_E:hover {
+  transform: translate(-2px, -2px) scale(1) !important;
+  box-shadow: 2px 2px 0 #1A1A1A !important;
+}
+
+/* ------------------------------------------------
+   Comments Thread
+   ------------------------------------------------ */
+.thread__collapse:after {
+  border-left-color: #E5E5E5 !important;
+}
+
+.thread__collapse:hover:after {
+  border-left: 3px solid rgb(220, 38, 38) !important;
+}
+
+.thread_theme_dark .thread__collapse:hover:after {
+  border-color: rgb(220, 38, 38) !important;
+}
+
+/* Collapse button */
+.thread__collapse_collapsed {
+  border-color: #1A1A1A !important;
+}
+
+/* ------------------------------------------------
+   Comment Styling
+   ------------------------------------------------ */
+.comment {
+  border-left: 2px solid #E5E5E5 !important;
+}
+
+.comment:hover {
+  border-left-color: rgb(220, 38, 38) !important;
+}
+
+/* Comment text */
+.comment__text,
+.raw-content {
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  color: #1A1A1A !important;
+}
+
+/* Username styling - IBM Plex Sans, black color */
+.comment__username,
+.auth-panel__username,
+.settings__username,
+.E_A {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  color: #1A1A1A !important;
+  font-weight: 600 !important;
+}
+
+/* Comment actions */
+.comment__action,
+.comment__action-link {
+  color: #6B6B6B !important;
+}
+
+.comment__action:hover,
+.comment__action-link:hover {
+  color: rgb(220, 38, 38) !important;
+}
+
+/* ------------------------------------------------
+   Dropdowns
+   ------------------------------------------------ */
+.dropdown__content {
+  border: 1px solid #1A1A1A !important;
+  border-radius: 6px !important;
+  box-shadow: 3px 3px 0 rgba(26, 26, 26, 0.1) !important;
+}
+
+.dropdown_theme_light .dropdown__content {
+  background-color: #FFFFFF !important;
+}
+
+/* Menu items */
+.M_A {
+  border: 1px solid #1A1A1A !important;
+  border-radius: 6px !important;
+  box-shadow: 3px 3px 0 rgba(26, 26, 26, 0.1) !important;
+}
+
+.M_C:hover,
+.M_C[aria-selected=true] {
+  background-color: rgb(220, 38, 38) !important;
+  color: #FFFFFF !important;
+}
+
+/* ------------------------------------------------
+   Root & Copyright
+   ------------------------------------------------ */
+.root_theme_light {
+  color: #1A1A1A !important;
+}
+
+.root_theme_light .root__copyright,
+.root_theme_light .root__copyright-link {
+  color: #6B6B6B !important;
+}
+
+.root_theme_light .root__pinned-comment {
+  border-bottom-color: #E5E5E5 !important;
+}
+
+.root_theme_light .root__pinned-comments {
+  background: #FFFFFF !important;
+}
+
+/* Selection color */
+.root::-moz-selection,
+.root::selection {
+  background: rgba(220, 38, 38, 0.2) !important;
+}
+
+/* ------------------------------------------------
+   Preloader
+   ------------------------------------------------ */
+.preloader,
+.preloader_view_iframe {
+  color: rgb(220, 38, 38) !important;
+}
+
+/* ------------------------------------------------
+   Settings Panel
+   ------------------------------------------------ */
+.settings__action {
+  color: rgb(220, 38, 38) !important;
+}
+
+.settings__action:hover {
+  color: rgb(185, 28, 28) !important;
+}
+
+/* ------------------------------------------------
+   User Avatar
+   ------------------------------------------------ */
+.G_B {
+  border: 1px solid rgba(220, 38, 38, 0.3) !important;
+}
+
+/* ------------------------------------------------
+   Focus States (Accessibility)
+   ------------------------------------------------ */
+button:focus,
+.button:focus {
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.4) !important;
+  outline: none !important;
+}
+
+/* ------------------------------------------------
+   Error States
+   ------------------------------------------------ */
+.S_B,
+.S_B:focus,
+.S_B:hover {
+  border-color: #B91C1C !important;
+  box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.2) !important;
+}
+
+.comment-form__error,
+.N_P {
+  background-color: rgba(185, 28, 28, 0.1) !important;
+  color: #B91C1C !important;
+}
+
+/* ------------------------------------------------
+   Anonymous Login Form
+   ------------------------------------------------ */
+.N_C {
+  background-color: #FFFFFF !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 10px !important;
+  box-shadow: 4px 4px 0 rgba(26, 26, 26, 0.1) !important;
+}
+
+.N_D {
+  color: #4A4A4A !important;
+}
+
+.N_E:before {
+  border-top-color: #E5E5E5 !important;
+}
+
+.N_E:after {
+  background-color: #FFFFFF !important;
+  color: #6B6B6B !important;
+}
+
+/* Tab selection */
+.N_H:checked + .N_G {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+  color: rgb(220, 38, 38) !important;
+}
+
+/* ------------------------------------------------
+   Sort Dropdown
+   ------------------------------------------------ */
+.H_B {
+  color: #4A4A4A !important;
+}
+
+.H_B:hover {
+  color: #1A1A1A !important;
+}

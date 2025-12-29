@@ -6,12 +6,34 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
-    props: { title: post.data.title, category: post.data.category },
+    props: {
+      title: post.data.title,
+      description: post.data.description,
+      category: post.data.category,
+      pubDate: post.data.pubDate,
+    },
   }));
 };
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, category } = props;
+  const { title, description, category, pubDate } = props;
+
+  // Format date like "December 28, 2025"
+  const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  // Estimate reading time (rough estimate based on title/description length)
+  // In a real scenario, we'd calculate from content
+  const readingTime = '5 min read';
+
+  // Build meta line: "December 28, 2025 · Machine Learning · 5 min read"
+  const metaParts = [formattedDate];
+  if (category) metaParts.push(category);
+  metaParts.push(readingTime);
+  const metaLine = metaParts.join(' · ');
 
   const html = {
     type: 'div',
@@ -40,44 +62,57 @@ export const GET: APIRoute = async ({ props }) => {
               boxShadow: '8px 8px 0 #1A1A1A',
             },
             children: [
+              // "dereferenced" - black, lowercase, Literata style
               {
                 type: 'div',
                 props: {
                   style: {
                     fontSize: '24px',
                     fontWeight: 600,
-                    color: '#DC2626',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    marginBottom: '16px',
+                    color: '#1A1A1A',
+                    letterSpacing: '0.02em',
+                    marginBottom: '24px',
                   },
-                  children: 'DEREFERENCED',
+                  children: 'dereferenced',
                 },
               },
+              // Meta line: date · category · reading time
               {
                 type: 'div',
                 props: {
                   style: {
-                    fontSize: '56px',
+                    fontSize: '16px',
+                    color: '#6B6B6B',
+                    marginBottom: '16px',
+                  },
+                  children: metaLine,
+                },
+              },
+              // Title
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    fontSize: '48px',
                     fontWeight: 700,
                     color: '#1A1A1A',
                     lineHeight: 1.2,
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
+                    marginBottom: '16px',
                   },
                   children: title,
                 },
               },
-              category && {
+              // Description
+              description && {
                 type: 'div',
                 props: {
                   style: {
-                    fontSize: '18px',
-                    color: '#6B6B6B',
-                    marginTop: 'auto',
+                    fontSize: '20px',
+                    color: '#4A4A4A',
+                    lineHeight: 1.5,
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
                   },
-                  children: category,
+                  children: description,
                 },
               },
             ].filter(Boolean),

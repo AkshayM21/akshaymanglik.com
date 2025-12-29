@@ -73,7 +73,9 @@ const pageId = "/dereferenced/understanding-grpo/";
     no_footer: false,
   };
 
-  // Load Remark42 script
+  // Load Remark42 embed script
+  // Note: Custom styling is applied via CSS mounted in the Remark42 server
+  // See /public/remark42-custom.css for the custom styles
   (function() {
     const d = document;
     const s = d.createElement('script');
@@ -81,132 +83,6 @@ const pageId = "/dereferenced/understanding-grpo/";
     s.defer = true;
     s.async = true;
     d.head.appendChild(s);
-
-    // Apply custom styles via MutationObserver when iframe loads
-    const injectStyles = () => {
-      const customCSS = `
-        /* Custom Remark42 styles to match Dereferenced design */
-        :root {
-          --font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
-          --color-primary: #DC2626 !important;
-          --color-hover: #B91C1C !important;
-        }
-
-        body {
-          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
-        }
-
-        .auth-panel,
-        .comment,
-        .comment__input {
-          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
-        }
-
-        .comment {
-          border-left: 2px solid #E5E5E5 !important;
-          border-radius: 0 !important;
-        }
-
-        .comment:hover {
-          border-left-color: #DC2626 !important;
-        }
-
-        .comment__text {
-          font-size: 15px !important;
-          line-height: 1.6 !important;
-          color: #4A4A4A !important;
-        }
-
-        .comment__input textarea {
-          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
-          font-size: 15px !important;
-          border: 1px solid #1A1A1A !important;
-          border-radius: 10px !important;
-        }
-
-        .comment__input textarea:focus {
-          border-color: #DC2626 !important;
-          box-shadow: none !important;
-          outline: none !important;
-        }
-
-        .comment__action,
-        .comment__action-link {
-          color: #6B6B6B !important;
-        }
-
-        .comment__action:hover,
-        .comment__action-link:hover {
-          color: #DC2626 !important;
-        }
-
-        button.auth-panel__submit,
-        button[type="submit"] {
-          background: #DC2626 !important;
-          border: 1px solid #1A1A1A !important;
-          border-radius: 6px !important;
-          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
-          font-weight: 500 !important;
-          transition: transform 0.1s ease, box-shadow 0.1s ease !important;
-        }
-
-        button.auth-panel__submit:hover,
-        button[type="submit"]:hover {
-          transform: translate(-2px, -2px) !important;
-          box-shadow: 3px 3px 0 #1A1A1A !important;
-        }
-
-        .auth-panel__provider-name {
-          font-family: 'IBM Plex Sans', -apple-system, sans-serif !important;
-        }
-
-        .auth-panel__user-id {
-          color: #4A4A4A !important;
-        }
-
-        a {
-          color: #DC2626 !important;
-        }
-
-        a:hover {
-          color: #B91C1C !important;
-        }
-      `;
-
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === 'IFRAME' && node.id && node.id.startsWith('remark42')) {
-              node.addEventListener('load', () => {
-                try {
-                  const iframeDoc = node.contentDocument || node.contentWindow.document;
-                  if (iframeDoc) {
-                    const style = iframeDoc.createElement('style');
-                    style.textContent = customCSS;
-                    iframeDoc.head.appendChild(style);
-                  }
-                } catch (e) {
-                  // Cross-origin restrictions may prevent this
-                  console.log('Could not inject custom styles into Remark42 iframe');
-                }
-              });
-            }
-          });
-        });
-      });
-
-      observer.observe(document.getElementById('remark42'), {
-        childList: true,
-        subtree: true
-      });
-    };
-
-    // Start observing when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', injectStyles);
-    } else {
-      injectStyles();
-    }
   })();
 })();</script>   <nav class="toc-sidebar" aria-label="Table of contents" data-astro-cid-4dqtj3le> <div class="toc-sidebar__title" data-astro-cid-4dqtj3le>Contents</div> <ul class="toc-sidebar__list" data-astro-cid-4dqtj3le> <li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#the-problem-with-traditional-rl" class="toc-sidebar__link" data-astro-cid-4dqtj3le>The Problem with Traditional RL</a> </li><li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#grpos-solution" class="toc-sidebar__link" data-astro-cid-4dqtj3le>GRPO’s Solution</a> </li><li class="toc-sidebar__item toc-sidebar__item--h2" data-astro-cid-4dqtj3le> <a href="#implications-for-llm-training" class="toc-sidebar__link" data-astro-cid-4dqtj3le>Implications for LLM Training</a> </li> </ul> </nav>  <aside class="sidenotes-gutter" aria-label="Sidenotes" data-astro-cid-4dqtj3le>  </aside> </article> <footer class="footer"> <p class="footer__text">
 © 2025 · Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> </p> </footer>  </div> </div> </div>  </body></html> <script type="module">function u(){const t=document.querySelectorAll(".toc-sidebar__link"),o=document.querySelectorAll("h2[id], h3[id]");if(t.length===0||o.length===0)return;t.forEach(c=>{c.addEventListener("click",()=>{t.forEach(n=>n.classList.remove("toc-sidebar__link--active")),c.classList.add("toc-sidebar__link--active")})});function r(){let n=null;for(const e of Array.from(o))if(e.getBoundingClientRect().top<=300)n=e;else break;!n&&o.length>0&&o[0].getBoundingClientRect().top<window.innerHeight&&(n=o[0]),!n&&o.length>0&&(n=o[0]),n&&(t.forEach(e=>e.classList.remove("toc-sidebar__link--active")),document.querySelector(`.toc-sidebar__link[href="#${n.id}"]`)?.classList.add("toc-sidebar__link--active"))}let i=!1;window.addEventListener("scroll",()=>{i||(window.requestAnimationFrame(()=>{r(),i=!1}),i=!0)}),r()}function d(){const t=document.querySelector(".sidenotes-gutter"),o=document.querySelectorAll("[data-sidenote-id]");if(!t)return;if(window.innerWidth<768){t.innerHTML="";return}if(o.length===0){t.innerHTML="";return}const r=t.getBoundingClientRect();t.innerHTML="",o.forEach((i,c)=>{i.dataset.sidenoteId;const n=i.querySelector("[data-sidenote-content]")?.innerHTML||"",s=i.getBoundingClientRect().top-r.top-12,a=document.createElement("div");a.className="sidenote-gutter-item",a.style.top=`${s}px`,a.innerHTML=`<span class="sidenote-gutter-item__number">${c+1}.</span> ${n}`,t.appendChild(a)})}function f(){const t=document.getElementById("footnotes-container"),o=document.querySelectorAll("[data-footnote-id]"),r=document.querySelector(".acknowledgements");if(!t)return;if(o.length===0&&!r){t.remove();return}let i="";r&&(i=r.outerHTML,r.remove());const c=Array.from(o).map(e=>{const s=e.dataset.footnoteId,a=e.querySelector("[data-footnote-content]")?.innerHTML||"";return{id:s,content:a}}),n=[...new Map(c.map(e=>[e.id,e])).values()];n.sort((e,s)=>parseInt(e.id||"0")-parseInt(s.id||"0")),t.innerHTML=`
