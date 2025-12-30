@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Kit-Api-Key': import.meta.env.KIT_API_KEY!,
+        'X-Kit-Api-Key': import.meta.env.KIT_V4_API_KEY!,
       },
       body: JSON.stringify({
         email_address: email,

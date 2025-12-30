@@ -19,7 +19,7 @@ Visit at [akshaymanglik.com](https://akshaymanglik.com)
 | Newsletter | [Kit](https://kit.com) (formerly ConvertKit) |
 | Newsletter Backup | Firebase Firestore (stores subscribers for redundancy) |
 | Hosting | Vercel (hybrid SSR) + Railway (comments) |
-| OG Images | [@vercel/og](https://vercel.com/docs/functions/og-image-generation) dynamic generation |
+| OG Images | Playwright (pre-generated static PNGs) |
 
 ## Notable Features
 
@@ -70,9 +70,10 @@ npm install
 
 Update these files with your own information:
 - `astro.config.mjs`: Change `site` to your domain
-- `src/pages/about.astro`: Your bio and photo
+- `src/pages/index.astro`: Your bio and photo (home/about page)
 - `src/content/blog/`: Replace with your posts
 - `public/assets/`: Replace profile photos and assets
+- Run `npm run generate-og` to regenerate OG images with your content
 
 ### 2. Vercel Deployment
 
@@ -161,8 +162,9 @@ Mount the custom CSS from the [remark42-dereferenced](https://github.com/AkshayM
 3. Get your form ID from the form embed code
 4. Add environment variables:
    ```
-   KIT_API_KEY=<your-api-key>
-   KIT_FORM_ID=<your-form-id>
+   KIT_V4_API_KEY=<your-v4-api-key>
+   KIT_API_SECRET=<your-api-secret>
+   KIT_WEBHOOK_SECRET=<your-webhook-secret>
    ```
 
 **Optional: Firebase Backup**
@@ -191,20 +193,24 @@ Create `.env.local` (copy from `.env.example`):
 ```
 PUBLIC_REMARK42_HOST=https://comments.yourdomain.com
 PUBLIC_REMARK42_SITE_ID=dereferenced
-KIT_API_KEY=<your-kit-api-key>
-KIT_FORM_ID=<your-kit-form-id>
+KIT_V4_API_KEY=<your-kit-v4-api-key>
+KIT_API_SECRET=<your-kit-api-secret>
+KIT_WEBHOOK_SECRET=<your-webhook-secret>
+FIREBASE_PROJECT_ID=<your-firebase-project-id>
+FIREBASE_CLIENT_EMAIL=<your-firebase-client-email>
+FIREBASE_PRIVATE_KEY=<your-firebase-private-key>
 ```
 
 ### 9. Verification Checklist
 
-- [ ] Site loads at yourdomain.com
+- [ ] Site loads at yourdomain.com (home/about page)
 - [ ] `/dereferenced` shows blog index
 - [ ] `/blog/*` rewrites work
 - [ ] Comments load on articles
 - [ ] OAuth login works (all 3 providers)
 - [ ] Newsletter signup works
 - [ ] RSS feed validates at `/rss.xml`
-- [ ] OG images generate at `/og/[slug].png`, `/og/about.png`, `/og/dereferenced.png`
+- [ ] OG images exist at `/og/index.png`, `/og/dereferenced.png`, `/og/[slug].png`
 - [ ] All tests pass (`npm test`)
 
 ---
@@ -223,9 +229,7 @@ src/
 ├── pages/
 │   ├── api/            # Newsletter subscribe endpoint
 │   ├── dereferenced/   # Blog index + [...slug].astro
-│   ├── og/             # OG image generation (about, dereferenced, [slug])
-│   ├── about.astro
-│   ├── index.astro     # Redirects to /about
+│   ├── index.astro     # Home/About page
 │   └── rss.xml.ts
 ├── content/blog/       # MDX posts
 └── styles/global.css   # Design tokens + component styles

@@ -41,7 +41,6 @@ src/
 ├── pages/
 │   ├── api/            # Newsletter subscribe, webhooks
 │   ├── dereferenced/   # Blog index + [...slug].astro
-│   ├── og/             # OG image generation (about, dereferenced, [slug])
 │   ├── about.astro
 │   ├── index.astro     # Redirects to /about
 │   └── rss.xml.ts
@@ -123,18 +122,28 @@ Text with a footnote<Footnote id="1">This shows on hover and in the footnotes se
 - `/about` - About page
 - `/rss.xml` - RSS feed
 - `/og/<slug>.png` - Generated OG images for posts
-- `/og/about.png` - OG image for about page
+- `/og/index.png` - OG image for about/home page
 - `/og/dereferenced.png` - OG image for blog index
 
 ## OG Image Generation
 
-Dynamic OG images are generated using `@vercel/og` (Satori). Located in `src/pages/og/`:
+OG images are pre-generated using Playwright and stored in `public/og/`. The generation script is at `scripts/generate-og-images.ts`.
 
-| File | Purpose |
-|------|---------|
-| `[...slug].png.ts` | Blog post OG - shows "dereferenced", date, category, title, description |
-| `about.png.ts` | About page OG - profile photo with bio text side-by-side |
-| `dereferenced.png.ts` | Blog index OG - shows 2 most recent post titles as mini cards |
+```bash
+# Generate OG images locally
+npm run generate-og
+```
+
+| Output File | Description |
+|-------------|-------------|
+| `public/og/index.png` | About page OG - profile photo with bio text |
+| `public/og/dereferenced.png` | Blog index OG - shows 2 most recent posts |
+| `public/og/<slug>.png` | Article OG - date, category, title, description |
+
+**Workflow:**
+- OG images are committed to the repo (not generated at build time)
+- A pre-commit hook (`npm run generate-og`) regenerates images when blog posts or profile pics change
+- Reference designs are in `public/assets/og-tests/` for visual regression testing
 
 All OG images use neobrutalist styling with black borders, offset shadows, and the cream/white color palette.
 
@@ -158,16 +167,18 @@ Newsletter signups use Kit (ConvertKit) for email delivery with Firebase Firesto
 ### Environment Variables
 
 ```bash
-# Kit API (v4 key for subscriptions, v3 secret for webhooks)
-KIT_API_KEY=kit_xxxxx
-KIT_API_SECRET=xxxxx
-KIT_WEBHOOK_SECRET=your-random-secret
+# Kit API
+KIT_V4_API_KEY=kit_xxxxx           # Required: v4 API key for subscriptions
+KIT_API_SECRET=xxxxx               # Required: v3 API secret for webhooks
+KIT_WEBHOOK_SECRET=your-secret     # Required: Secret for webhook verification
 
 # Firebase Service Account
 FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
+
+**Note:** The subscribe API uses Kit v4 (`KIT_V4_API_KEY`), while webhooks use v3 (`KIT_API_SECRET`).
 
 ### Firebase Setup
 
@@ -264,7 +275,7 @@ GitHub Actions workflow (`.github/workflows/test.yml`) runs on push and PR:
 | `src/layouts/BlogLayout.astro` | Article page with grid layout, TOC, footnotes |
 | `src/components/mdx/Sidenote.astro` | Margin notes (gutter on desktop, toggle on mobile) |
 | `src/components/mdx/Footnote.astro` | Footnotes with hover tooltips |
-| `src/pages/og/*.ts` | OG image generation endpoints |
+| `scripts/generate-og-images.ts` | Playwright OG image generator |
 | `src/pages/api/subscribe.ts` | Newsletter subscribe API |
 | `vercel.json` | Rewrites, redirects, headers |
 | `.github/workflows/test.yml` | CI/CD test workflow |
