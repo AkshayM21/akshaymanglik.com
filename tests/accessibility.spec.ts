@@ -78,7 +78,7 @@ test.describe('Accessibility', () => {
   });
 
   test('images have alt text', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/');
 
     const aboutPhoto = page.locator('.about-photo');
     const altText = await aboutPhoto.getAttribute('alt');

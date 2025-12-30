@@ -49,7 +49,7 @@ test.describe('Visual layout - Desktop', () => {
   });
 
   test('about page photo has shadow', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/');
 
     const photo = page.locator('.about-photo');
     await expect(photo).toBeVisible();
@@ -62,7 +62,7 @@ test.describe('Visual layout - Desktop', () => {
   });
 
   test('about page connect links are horizontal', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/');
 
     const connectLinks = page.locator('.connect-links');
     await expect(connectLinks).toBeVisible();

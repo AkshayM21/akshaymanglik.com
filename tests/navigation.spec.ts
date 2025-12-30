@@ -1,9 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Navigation', () => {
-  test('home redirects to /about', async ({ page }) => {
+  test('home page is the about page', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveURL(/\/about/);
+    // Home page should stay at / (no redirect)
+    await expect(page).toHaveURL('/');
+    // Should show About content
+    await expect(page.locator('.article__title')).toContainText('About');
   });
 
   test('nav links are present and functional', async ({ page }) => {
@@ -22,15 +25,19 @@ test.describe('Navigation', () => {
 
     // Test about link
     await aboutLink.click();
-    await expect(page).toHaveURL(/\/about/);
+    await expect(page).toHaveURL('/');
   });
 
-  test('logo links to blog index', async ({ page }) => {
-    await page.goto('/about');
+  test('logo links correctly based on page', async ({ page }) => {
+    // On home page, logo links to home (/)
+    await page.goto('/');
+    const logoHome = page.locator('.nav__logo');
+    await expect(logoHome).toHaveAttribute('href', '/');
 
-    const logo = page.locator('.nav__logo');
-    await logo.click();
-    await expect(page).toHaveURL(/\/dereferenced/);
+    // On blog pages, logo links to blog index (/dereferenced)
+    await page.goto('/dereferenced');
+    const logoBlog = page.locator('.nav__logo');
+    await expect(logoBlog).toHaveAttribute('href', '/dereferenced');
   });
 
   test('logo has hover tooltip on desktop', async ({ page }) => {

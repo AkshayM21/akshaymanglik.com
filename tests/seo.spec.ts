@@ -73,7 +73,12 @@ test.describe('SEO verification', () => {
 
   test('sitemap is valid XML', async () => {
     // Read sitemap directly from build output (Astro preview server doesn't serve .xml reliably)
-    const sitemapPath = path.join(process.cwd(), 'dist', 'sitemap-index.xml');
+    // In server mode (with API routes), static files are in dist/client
+    const baseDistDir = path.join(process.cwd(), 'dist');
+    const distDir = fs.existsSync(path.join(baseDistDir, 'client'))
+      ? path.join(baseDistDir, 'client')
+      : baseDistDir;
+    const sitemapPath = path.join(distDir, 'sitemap-index.xml');
     const body = fs.readFileSync(sitemapPath, 'utf-8');
 
     expect(body).toContain('<?xml');
@@ -81,7 +86,7 @@ test.describe('SEO verification', () => {
   });
 
   test('about page has meta description', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/');
 
     const metaDesc = page.locator('meta[name="description"]');
     const content = await metaDesc.getAttribute('content');

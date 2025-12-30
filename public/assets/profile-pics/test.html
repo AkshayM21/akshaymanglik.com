@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OG Image Templates</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet">
+  <style>
+/* ============================================
+   SHARED STYLES
+   ============================================ */
+:root {
+  --color-bg: #FAF8F5;
+  --color-card: #FFFFFF;
+  --color-border: #1A1A1A;
+  --color-accent: #DC2626;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #4A4A4A;
+  --color-text-muted: #6B6B6B;
+  --color-title-card-bg: #EDEBE8;
+  
+  --font-display: 'Literata', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  --border: 1px solid var(--color-border);
+  --shadow: 4px 4px 0 var(--color-border);
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  background: #E8E6E3;
+  padding: 40px;
+}
+
+/* Base OG container - 1200x630 */
+.og-container {
+  width: 1200px;
+  height: 630px;
+  background: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 60px;
+}
+
+.og-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: 12px;
+}
+
+/* ============================================
+   OG IMAGE 1: ABOUT PAGE
+   ============================================ */
+.og-about {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+.og-about__card {
+  background: var(--color-card);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 48px 56px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  max-width: 920px;
+}
+
+.og-about__photo {
+  width: 180px;
+  height: 180px;
+  border: var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.og-about__content {
+  flex: 1;
+}
+
+.og-about__intro {
+  font-family: var(--font-body);
+  font-size: 26px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+}
+
+.og-about__intro strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.og-about__intro a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.og-about__paragraph {
+  font-family: var(--font-body);
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.og-about__branding {
+  position: absolute;
+  bottom: 32px;
+  left: 60px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   OG IMAGE 2: BLOG LIST
+   ============================================ */
+.og-blog-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.og-blog-list__wrapper {
+  background: var(--color-card);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  margin: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.og-blog-list__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: var(--border);
+}
+
+.og-blog-list__logo {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.og-blog-list__links {
+  display: flex;
+  gap: 32px;
+}
+
+.og-blog-list__links span {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--color-text-secondary);
+}
+
+.og-blog-list__posts {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.og-blog-list__post {
+  background: var(--color-card);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px;
+}
+
+.og-blog-list__meta {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.og-blog-list__title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.og-blog-list__excerpt {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   OG IMAGE 3: ARTICLE (Geometry of Attention)
+   ============================================ */
+.og-article {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+.og-article__card {
+  background: var(--color-title-card-bg);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 56px 64px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.og-article__meta {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+.og-article__title {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+}
+
+.og-article__subtitle {
+  font-family: var(--font-body);
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.og-article__branding {
+  position: absolute;
+  bottom: 32px;
+  right: 60px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       OG IMAGE 1: ABOUT PAGE
+       ID: og-about
+       ========================================== -->
+  <p class="og-label">OG Image 1: About Page (1200×630) — #og-about</p>
+  <div class="og-container og-about" id="og-about">
+    <div class="og-about__card">
+      <img src="pfp.jpeg" alt="Akshay Manglik" class="og-about__photo">
+      <div class="og-about__content">
+        <p class="og-about__intro">
+          I'm <strong>Akshay Manglik</strong>, an Applied AI Engineer at <a href="#">Scale AI</a> on the Enterprise ML team.
+        </p>
+        <p class="og-about__paragraph">
+          I graduated from Columbia University in 2025 with a B.A. in Computer Science and Economics, and a minor in Mathematics.
+        </p>
+        <p class="og-about__paragraph">
+          I'm interested in designing adaptive systems capable of learning and self-correcting over time, with minimal human intervention.
+        </p>
+      </div>
+    </div>
+    <div class="og-about__branding">dereferenced</div>
+  </div>
+
+  <!-- ==========================================
+       OG IMAGE 2: BLOG LIST
+       ID: og-blog-list
+       ========================================== -->
+  <p class="og-label">OG Image 2: Blog List (1200×630) — #og-blog-list</p>
+  <div class="og-container og-blog-list" id="og-blog-list">
+    <div class="og-blog-list__wrapper">
+      <nav class="og-blog-list__nav">
+        <div class="og-blog-list__logo">dereferenced</div>
+        <div class="og-blog-list__links">
+          <span>writing</span>
+          <span>about</span>
+        </div>
+      </nav>
+      <div class="og-blog-list__posts">
+        <article class="og-blog-list__post">
+          <div class="og-blog-list__meta">December 2025 · Machine Learning</div>
+          <h2 class="og-blog-list__title">The Geometry of Attention</h2>
+          <p class="og-blog-list__excerpt">A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio.</p>
+        </article>
+        <article class="og-blog-list__post">
+          <div class="og-blog-list__meta">November 2025 · Reinforcement Learning</div>
+          <h2 class="og-blog-list__title">Understanding GRPO</h2>
+          <p class="og-blog-list__excerpt">Group Relative Policy Optimization eliminates the learned value function. Here's why that matters for RL training.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       OG IMAGE 3: ARTICLE (Geometry of Attention)
+       ID: og-article
+       ========================================== -->
+  <p class="og-label">OG Image 3: Article — The Geometry of Attention (1200×630) — #og-article</p>
+  <div class="og-container og-article" id="og-article">
+    <div class="og-article__card">
+      <div class="og-article__meta">December 25, 2025 · Machine Learning · 6 min read</div>
+      <h1 class="og-article__title">The Geometry of Attention</h1>
+      <p class="og-article__subtitle">A geometric intuition for why attention mechanisms work so well across domains—from NLP to vision to audio.</p>
+    </div>
+    <div class="og-article__branding">dereferenced</div>
+  </div>
+
+  <!-- ==========================================
+       PLAYWRIGHT USAGE EXAMPLE
+       ========================================== -->
+  <!--
+  Example Playwright test to screenshot each OG image:
+  
+  import { test, expect } from '@playwright/test';
+  
+  test('generate OG images', async ({ page }) => {
+    await page.goto('file:///path/to/og-images-all.html');
+    
+    // Wait for fonts to load
+    await page.waitForLoadState('networkidle');
+    
+    // Screenshot About page OG
+    const aboutOg = await page.locator('#og-about');
+    await aboutOg.screenshot({ path: 'og-about.png' });
+    
+    // Screenshot Blog List OG
+    const blogListOg = await page.locator('#og-blog-list');
+    await blogListOg.screenshot({ path: 'og-blog-list.png' });
+    
+    // Screenshot Article OG
+    const articleOg = await page.locator('#og-article');
+    await articleOg.screenshot({ path: 'og-article.png' });
+  });
+  -->
+
+</body>
+</html>

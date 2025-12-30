@@ -26,3 +26,8 @@ pnpm-debug.log*
 
 # astro
 .astro/
+
+# test artifacts
+tests/og-diff/
+test-results/
+playwright-report/

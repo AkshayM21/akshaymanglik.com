@@ -4,7 +4,12 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distDir = path.join(__dirname, '../dist');
+// In server mode (with API routes), static files are in dist/client
+// In static mode, they're directly in dist
+const baseDistDir = path.join(__dirname, '../dist');
+const distDir = fs.existsSync(path.join(baseDistDir, 'client'))
+  ? path.join(baseDistDir, 'client')
+  : baseDistDir;
 
 test.describe('Build verification', () => {
   test('dist directory exists after build', () => {
@@ -14,7 +19,6 @@ test.describe('Build verification', () => {
   test('expected pages exist in dist', () => {
     const expectedPages = [
       'index.html',
-      'about/index.html',
       'dereferenced/index.html',
       'dereferenced/geometry-of-attention/index.html',
       'dereferenced/understanding-grpo/index.html',

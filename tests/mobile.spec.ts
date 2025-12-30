@@ -69,7 +69,7 @@ test.describe('Mobile layout', () => {
   });
 
   test('about page responsive layout', async ({ page }) => {
-    await page.goto('/about');
+    await page.goto('/');
 
     // Photo should be visible
     const photo = page.locator('.about-photo');
