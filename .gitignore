@@ -31,3 +31,6 @@ pnpm-debug.log*
 tests/og-diff/
 test-results/
 playwright-report/
+
+# vercel build output (should not be committed)
+.vercel/

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Regenerate OG images if relevant files changed
+CHANGED_FILES=$(git diff --cached --name-only)
+
+# Check if any OG-relevant files changed
+if echo "$CHANGED_FILES" | grep -qE "(src/content/blog/|public/assets/profile-pics/pfp|scripts/generate-og)"; then
+  echo "OG-relevant files changed, regenerating OG images..."
+  npm run generate-og
+
+  # Stage the updated OG images
+  git add public/og/*.png
+  echo "OG images regenerated and staged."
+fi
