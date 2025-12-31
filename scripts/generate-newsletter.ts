@@ -86,7 +86,7 @@ ${excerpt}
 
 ---
 
-*You're receiving this because you subscribed to Dereferenced, a blog about technology, politics, and economics.*
+*You're receiving this because you subscribed to Dereferenced, a blog about technology, economics, and philosophy.*
 
 *[Unsubscribe](#) | [View in browser](${postUrl})*
 `.trim();
