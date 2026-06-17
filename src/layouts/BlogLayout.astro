@@ -225,16 +225,22 @@ const showTOC = tocHeadings.length > 2;
     sidenotes.forEach((sidenote, index) => {
       const content = sidenote.querySelector('[data-sidenote-content]')?.innerHTML || '';
 
-      // Ideal vertical position relative to gutter, offset to center with the superscript line
-      const markerRect = sidenote.getBoundingClientRect();
-      const idealTop = markerRect.top - gutterRect.top - 12;
-
       const item = document.createElement('div');
       item.className = 'sidenote-gutter-item';
-      item.dataset.idealTop = String(idealTop);
       item.innerHTML = `<span class="sidenote-gutter-item__number">${index + 1}.</span> ${content}`;
-
       gutter.appendChild(item);
+
+      // Align the note's FIRST TEXT LINE with the in-text marker's line.
+      // markerRect.top is the top of the marker's (17px body) line box; the gutter
+      // item adds top padding before its 12px text, so we cancel that padding and
+      // apply a small optical nudge so the note's first line sits on the marker's
+      // line rather than floating above it. (Previously a flat -12 over-raised it.)
+      const markerRect = sidenote.getBoundingClientRect();
+      const itemPadTop = parseFloat(getComputedStyle(item).paddingTop) || 0;
+      const OPTICAL_NUDGE = 2; // px down — visually centers 12px note on the marker line
+      const idealTop = markerRect.top - gutterRect.top - itemPadTop + OPTICAL_NUDGE;
+
+      item.dataset.idealTop = String(idealTop);
       items.push(item);
     });
 

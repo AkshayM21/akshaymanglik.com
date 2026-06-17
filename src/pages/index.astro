@@ -14,7 +14,7 @@ import Card from '@/components/global/Card.astro';
           <header class="article__header">
             <h1 class="article__title">About</h1>
           </header>
-          <div class="prose">
+          <div class="prose prose--about">
             <div class="about-intro">
               <img
                 src="/assets/profile-pics/pfp.jpeg"
@@ -177,6 +177,30 @@ import Card from '@/components/global/Card.astro';
 </BaseLayout>
 
 <style>
+  /* FIX A: Keep the About page at its OLD (pre-global-change) prose sizing.
+     The global `.prose` rule (src/styles/global.css) was bumped to 17px with a
+     larger heading ladder for BlogLayout articles. The About page shares the
+     `.prose` class, so it inherited that growth. These overrides restore the
+     About page's original sizes WITHOUT touching the global rule, so articles
+     keep the new 17px prose. Values mirror master's `.prose` block:
+       font-size 0.9375rem (15px), h2 var(--text-xl), h3 var(--text-lg),
+       code var(--text-xs). line-height was already --leading-relaxed in master. */
+  .prose--about {
+    font-size: 0.9375rem; /* 15px — matches old About body; inherited by all children */
+  }
+
+  .prose--about :global(h2) {
+    font-size: var(--text-xl);
+  }
+
+  .prose--about :global(h3) {
+    font-size: var(--text-lg);
+  }
+
+  .prose--about :global(code) {
+    font-size: var(--text-xs);
+  }
+
   .about-intro {
     display: flex;
     gap: var(--space-6);

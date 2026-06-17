@@ -5,16 +5,14 @@ interface Props {
 const { id } = Astro.props;
 ---
 
-<span class="sidenote" data-sidenote-id={id}>
-  <label class="sidenote-toggle" for={`sn-${id}`}>
-    <sup class="sidenote-number"></sup>
-  </label>
-  <input type="checkbox" id={`sn-${id}`} class="sidenote-checkbox" />
-  <span class="sidenote-content" data-sidenote-content>
-    <span class="sidenote-content__number"></span>
-    <slot />
-  </span>
-</span>
+<span class="sidenote" data-sidenote-id={id}><label
+    class="sidenote-toggle"
+    for={`sn-${id}`}><sup class="sidenote-number"></sup></label><input
+    type="checkbox"
+    id={`sn-${id}`}
+    class="sidenote-checkbox"
+  /><span class="sidenote-content" data-sidenote-content><span
+      class="sidenote-content__number"></span><slot /></span></span>
 
 <style>
   .sidenote {
