@@ -1,24 +1,10 @@
 import type { APIRoute } from 'astro';
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getDb, normalizeEmail } from '../../../lib/firebase';
 
 export const prerender = false;
 
-// Initialize Firebase Admin (singleton pattern)
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: import.meta.env.FIREBASE_PROJECT_ID,
-      clientEmail: import.meta.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: import.meta.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
-}
-
-const db = getFirestore();
-
 export const POST: APIRoute = async ({ request, url }) => {
-  // Security: Verify secret token from query param
+  // Security: Verify secret token from query param (BEFORE Firebase init)
   const secret = url.searchParams.get('secret');
   if (secret !== import.meta.env.KIT_WEBHOOK_SECRET) {
     console.error('Unauthorized webhook attempt');
@@ -39,13 +25,20 @@ export const POST: APIRoute = async ({ request, url }) => {
       });
     }
 
-    // Update Firebase: mark as unsubscribed
-    await db.collection('subscribers').doc(subscriber.email_address).update({
+    // Normalize to match the doc id written by subscribe.ts
+    const normalizedEmail = normalizeEmail(subscriber.email_address);
+
+    // Update Firebase: mark as unsubscribed (lazy init happens here).
+    // set(..., { merge: true }) is idempotent: it won't throw NOT_FOUND for
+    // subscribers who signed up directly via a Kit form (no Firestore doc).
+    await getDb().collection('subscribers').doc(normalizedEmail).set({
       status: 'unsubscribed',
       unsubscribedAt: new Date().toISOString(),
-    });
+    }, { merge: true });
 
-    console.log(`Marked ${subscriber.email_address} as unsubscribed`);
+    // Avoid logging the full email (PII): only the domain is retained for diagnostics.
+    const emailDomain = normalizedEmail.split('@')[1] ?? 'unknown';
+    console.log(`Marked subscriber (domain: ${emailDomain}) as unsubscribed`);
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -53,7 +46,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
   } catch (error: any) {
     console.error('Webhook error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

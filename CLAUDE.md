@@ -35,7 +35,7 @@ src/
 │   ├── global/         # Header, Footer, Card
 │   ├── blog/           # PostCard, TOC
 │   ├── mdx/            # Sidenote, Footnote, Callout, Figure
-│   ├── newsletter/     # NewsletterCard, InlineSubscribe
+│   ├── newsletter/     # NewsletterCard
 │   └── comments/       # Remark42
 ├── layouts/            # BaseLayout, BlogLayout
 ├── pages/
@@ -160,6 +160,15 @@ The Remark42.astro component injects custom CSS to match the design system.
 
 **Custom CSS Theme**: See [remark42-dereferenced](https://github.com/AkshayM21/remark42-dereferenced) for the custom CSS that styles Remark42 to match the blog's neobrutalist aesthetic.
 
+**Hosting / recovery**: Remark42 runs on Railway — project `thriving-flexibility`, service `remark42-dereferenced` (source repo AkshayM21/remark42-dereferenced, a Dockerfile that extends `umputun/remark42` + injects `custom.css`), serving https://comments.akshaymanglik.com (custom domain, port 8080), with a persistent volume at `/srv/var` holding the comment DB. If comments 404, the service usually has **no active deployment** (Railway reaped it). Recover with:
+
+```bash
+railway link -p thriving-flexibility -e production -s remark42-dereferenced
+railway redeploy -s remark42-dereferenced --from-source -y
+```
+
+The volume (comment data) survives redeploys.
+
 ## Newsletter (Kit + Firebase)
 
 Newsletter signups use Kit (ConvertKit) for email delivery with Firebase Firestore as a backup database.
@@ -208,7 +217,7 @@ curl -X POST https://api.convertkit.com/v3/automations/hooks \
 
 ## Deployment
 
-Deploy to Vercel with the Astro adapter (`output: 'hybrid'` for serverless API routes). The `vercel.json` handles:
+Deploy to Vercel with the Astro Vercel adapter using `output: 'static'`. Non-prerendered endpoints (API routes and `rss.xml`) are auto-detected and emitted as serverless functions. The `vercel.json` handles:
 - `/blog/*` → `/dereferenced/*` rewrites
 - RSS feed headers
 - Security headers
@@ -270,7 +279,7 @@ GitHub Actions workflow (`.github/workflows/test.yml`) runs on push and PR:
 
 | File | Purpose |
 |------|---------|
-| `astro.config.mjs` | Astro + MDX + math plugins, hybrid output mode |
+| `astro.config.mjs` | Astro + MDX + math plugins, `output: 'static'` with Vercel adapter |
 | `src/styles/global.css` | All design tokens and component styles |
 | `src/layouts/BlogLayout.astro` | Article page with grid layout, TOC, footnotes |
 | `src/components/mdx/Sidenote.astro` | Margin notes (gutter on desktop, toggle on mobile) |
