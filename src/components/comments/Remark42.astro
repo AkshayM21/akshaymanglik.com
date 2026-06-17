@@ -31,8 +31,8 @@ const REMARK42_SITE_ID = import.meta.env.PUBLIC_REMARK42_SITE_ID || 'dereference
   };
 
   // Load Remark42 embed script
-  // Note: Custom styling is applied via CSS mounted in the Remark42 server
-  // See /public/remark42-custom.css for the custom styles
+  // Note: Custom styling is baked into the Remark42 server image at build time
+  // (custom.css appended to remark.css). Source: github.com/AkshayM21/remark42-dereferenced
   (function() {
     const d = document;
     const s = d.createElement('script');
