@@ -185,8 +185,10 @@ import Card from '@/components/global/Card.astro';
   }
 
   .about-photo {
-    width: 150px;
-    height: 175px;
+    /* Fluid but with a consistent 6:7 crop at every size (no jump on mobile). */
+    aspect-ratio: 6 / 7;
+    width: clamp(110px, 30vw, 150px);
+    height: auto;
     border-radius: var(--radius-md);
     border: var(--border);
     box-shadow: var(--shadow);
@@ -229,16 +231,7 @@ import Card from '@/components/global/Card.astro';
     .about-intro {
       flex-direction: column;
       align-items: flex-start;
-      /* Removed text-align: center - keep text left-justified */
-    }
-
-    .about-photo {
-      width: 120px;
-      height: 120px;
-    }
-
-    .connect-links {
-      justify-content: center;
+      /* Keep text left-justified; about-photo keeps its 6:7 crop via clamp() */
     }
   }
 </style>

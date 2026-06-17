@@ -76,37 +76,37 @@ const desc = variant === 'article'
     border: var(--border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow);
-    padding: 1.5rem;
+    padding: var(--space-6);
     margin-top: var(--space-8);
   }
 
   .newsletter-card__title {
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
   }
 
   .newsletter-card__desc {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     color: var(--color-text-secondary);
-    margin-bottom: 1rem;
-    line-height: 1.5;
+    margin-bottom: var(--space-4);
+    line-height: var(--leading-normal);
   }
 
   .newsletter-card__form {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: var(--space-3);
   }
 
   .newsletter-card__input {
     flex: 1;
-    padding: 0.625rem 0.875rem;
-    font-size: 0.9rem;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
     font-family: var(--font-body);
     border: var(--border);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--color-card);
   }
 
@@ -115,18 +115,18 @@ const desc = variant === 'article'
   }
 
   .newsletter-card__input:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   .newsletter-card__btn {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.875rem;
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-sm);
     font-weight: 500;
     background: var(--color-accent);
     color: white;
     border: var(--border);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: transform 0.1s ease, box-shadow 0.1s ease;
     white-space: nowrap;
@@ -159,10 +159,17 @@ const desc = variant === 'article'
     }
   }
 
-  /* Listing variant - matches post card sizing */
+  /* Listing variant - matches post card sizing (flat until hover, like post cards) */
   .newsletter-card--listing {
     margin-top: 0;
     padding: var(--space-5) var(--space-6);
+    box-shadow: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .newsletter-card--listing:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow);
   }
 
   .newsletter-card--listing .newsletter-card__title {
@@ -176,7 +183,7 @@ const desc = variant === 'article'
 
   .newsletter-card--listing .newsletter-card__input,
   .newsletter-card--listing .newsletter-card__btn {
-    padding: 0.5rem 0.75rem;
+    padding: var(--space-2) var(--space-3);
     font-size: var(--text-sm);
   }
 </style>

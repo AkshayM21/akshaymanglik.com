@@ -2,6 +2,15 @@
    DEREFERENCED — Soft Neobrutalism Design System
    ================================================ */
 
+/* Responsive breakpoints (standardized):
+   - 768px : primary mobile/desktop split (article grid collapses, sidenotes
+             gutter + sticky TOC appear; expressed as the 767/768 pair).
+   - 1024px: medium tier ceiling — 768–1023px uses narrower side columns
+             (max-width:1023px AND min-width:768px).
+   - 640px : container-padding / heading-size step-down before the grid collapse.
+   - 480px : smallest tier — single-column lists, stacked about-intro. */
+
+
 /* ------------------------------------------------
    CSS CUSTOM PROPERTIES (Design Tokens)
    ------------------------------------------------ */
@@ -59,6 +68,7 @@
   --text-2xl: 1.5rem;    /* 24px */
   --text-3xl: 2rem;      /* 32px */
   --text-4xl: 2.5rem;    /* 40px */
+  --text-prose: 1.0625rem; /* 17px — comfortable long-form reading size */
 
   /* Typography — Line Heights */
   --leading-tight: 1.2;
@@ -90,13 +100,20 @@
 
   /* Layout — Fluid sizing */
   --container-width: min(900px, 95vw);
-  --article-container-width: min(1050px, 95vw);
+  /* Article container must fit: content(680) + 2 gutters(180 each) + 2 gaps(40 each)
+     = 1120px inner; 1180px gives headroom for card padding. See .article-layout.
+     NOTE: .article-layout applies var(--space-6)=24px horizontal padding (border-box,
+     inside this max-width), so the actual content column tops out at ~632px, not 680. */
+  --article-container-width: min(1180px, 95vw);
   --content-width: min(680px, 100%);
   --sidebar-width: clamp(140px, 15vw, 180px);
   --sidenote-column-width: clamp(140px, 15vw, 180px);
   --sidenote-width: clamp(140px, 14vw, 180px);
   --gutter-width: clamp(180px, 18vw, 260px);
   --article-gap: clamp(1.5rem, 3vw, 2.5rem);
+
+  /* Z-index scale */
+  --z-tooltip: 100;
 }
 
 /* ------------------------------------------------
@@ -210,7 +227,7 @@ body {
   visibility: hidden;
   transform: translateY(-4px);
   transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-  z-index: 100;
+  z-index: var(--z-tooltip);
   pointer-events: none;
 }
 
@@ -256,13 +273,19 @@ body {
   display: grid;
   padding: var(--space-10) var(--space-6);
   counter-reset: sidenote-counter footnote-counter;
+  /* Per-tier gutter widths. Single source of truth: these drive BOTH the grid
+     columns below AND the .figure--full bleed (Figure.astro), so the full-width
+     figure can never diverge from the grid's actual gutters. The large/default
+     tier is symmetric (TOC and sidenote columns equal width). */
+  --grid-left-gutter: var(--sidebar-width);
+  --grid-right-gutter: var(--sidenote-column-width);
   /* Asymmetric columns: TOC | content | sidenotes (wider) */
   grid-template-columns:
-    minmax(0, var(--sidebar-width))
+    minmax(0, var(--grid-left-gutter))
     minmax(0, var(--content-width))
-    minmax(0, var(--sidenote-column-width));
+    minmax(0, var(--grid-right-gutter));
   gap: 0 var(--article-gap);
-  max-width: calc(var(--sidebar-width) + var(--content-width) + var(--sidenote-column-width) + var(--article-gap) * 2);
+  max-width: calc(var(--grid-left-gutter) + var(--content-width) + var(--grid-right-gutter) + var(--article-gap) * 2);
   margin: 0 auto;
 }
 
@@ -271,23 +294,17 @@ body {
   grid-column: 2;
 }
 
-/* Large screens: full 3-column layout */
-@media (min-width: 1024px) {
-  .article-layout {
-    grid-template-columns:
-      minmax(0, var(--sidebar-width))
-      minmax(0, var(--content-width))
-      minmax(0, var(--sidenote-column-width));
-  }
-}
-
-/* Medium screens: narrower sidebars */
+/* Medium screens: narrower sidebars (between the mobile split at 768 and full size).
+   Override the per-tier gutter tokens so the grid AND the figure bleed both use
+   this tier's actual columns (narrower TOC, wider sidenote gutter). */
 @media (max-width: 1023px) and (min-width: 768px) {
   .article-layout {
+    --grid-left-gutter: clamp(120px, 12vw, 160px);
+    --grid-right-gutter: clamp(180px, 18vw, 240px);
     grid-template-columns:
-      clamp(120px, 12vw, 160px)
+      var(--grid-left-gutter)
       minmax(0, 1fr) /* minmax(0, 1fr) prevents content from expanding grid */
-      clamp(180px, 18vw, 240px);
+      var(--grid-right-gutter);
   }
 }
 
@@ -326,7 +343,7 @@ body {
   border: var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
-  padding: 1.5rem 1.75rem;
+  padding: var(--space-6) var(--space-8);
   margin-bottom: var(--space-8);
   max-width: 100%;
   overflow-wrap: break-word;
@@ -352,7 +369,7 @@ body {
   font-weight: 600;
   line-height: var(--leading-tight);
   color: var(--color-text-primary);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 var(--space-2) 0;
 }
 
 .article__subtitle {
@@ -368,7 +385,7 @@ body {
   }
 
   .title-card {
-    padding: 1.25rem 1.5rem;
+    padding: var(--space-5) var(--space-6);
   }
 }
 
@@ -377,7 +394,7 @@ body {
    ------------------------------------------------ */
 .prose {
   font-family: var(--font-body);
-  font-size: 0.9375rem;  /* 15px - reduced from --text-lg (18px) */
+  font-size: var(--text-prose);  /* 17px — on-scale long-form reading size */
   line-height: var(--leading-relaxed);
   color: var(--color-text-secondary);
   min-width: 0; /* Allow shrinking in grid */
@@ -394,7 +411,7 @@ body {
 
 .prose h2 {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   font-weight: 600;
   line-height: var(--leading-snug);
   color: var(--color-text-primary);
@@ -404,7 +421,7 @@ body {
 
 .prose h3 {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: 600;
   line-height: var(--leading-snug);
   color: var(--color-text-primary);
@@ -457,6 +474,8 @@ body {
   background: var(--color-callout-bg);
   padding: 0.15em 0.4em;
   border-radius: var(--radius-sm);
+  /* Intentionally subtle: a full black border would make inline code look
+     heavy inline. The light divider tint keeps it legible but quiet. */
   border: 1px solid var(--color-divider);
 }
 
@@ -474,7 +493,7 @@ body {
   background: none;
   border: none;
   padding: 0;
-  font-size: var(--text-xs);  /* 12px - reduced from --text-sm (14px) */
+  font-size: var(--text-sm);  /* 14px */
 }
 
 .prose hr {
@@ -708,7 +727,9 @@ body {
 .toc-sidebar {
   grid-column: 1;
   grid-row: 1 / -1;
-  justify-self: center;
+  /* Anchor to the left edge so it doesn't wander inside the clamp() column;
+     use padding for the visual offset instead of centering. */
+  justify-self: start;
   align-self: start;
   position: sticky;
   top: clamp(1.5rem, 4vh, 2.5rem);
@@ -863,15 +884,15 @@ body {
 .featured-projects {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
 }
 
 .project-card {
   background: var(--color-card);
   border: var(--border);
   border-radius: var(--radius-md);
-  padding: 1.25rem 1.5rem;
+  padding: var(--space-5) var(--space-6);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -883,26 +904,26 @@ body {
 .project-card__header {
   display: flex;
   align-items: baseline;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
   flex-wrap: wrap;
 }
 
 .project-card__title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
 .project-card__links {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   align-items: baseline;
 }
 
 .project-card__link {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-accent);
   text-decoration: none;
@@ -913,29 +934,23 @@ body {
 }
 
 .project-card__desc {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-3);
 }
 
 .project-card__tags {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
-/* Tags */
-.tag {
-  font-size: 0.7rem;
-  font-weight: 500;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid transparent;
-}
-
+/* Colored project/domain tag variants.
+   Base .tag (canonical, with 1px black border + --radius-sm) is defined above;
+   these only override colors and keep an explicit colored border. */
 .tag--live { background: var(--tag-live-bg); color: var(--tag-live); border-color: var(--tag-live); }
-.tag--progress { background: var(--tag-progress-bg); color: var(--tag-progress); border-color: #D1D5DB; }
+.tag--progress { background: var(--tag-progress-bg); color: var(--tag-progress); border-color: var(--color-divider); }
 .tag--llm { background: var(--tag-llm-bg); color: var(--tag-llm); border-color: var(--tag-llm); }
 .tag--mobile { background: var(--tag-mobile-bg); color: var(--tag-mobile); border-color: var(--tag-mobile); }
 .tag--research { background: var(--tag-research-bg); color: var(--tag-research); border-color: var(--tag-research); }
@@ -947,36 +962,38 @@ body {
    OTHER PROJECTS — Grid List
    ------------------------------------------------ */
 .other-projects {
-  padding-top: 1.5rem;
+  padding-top: var(--space-6);
   border-top: 1px dashed var(--color-border);
 }
 
 .other-projects__title {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 
 .project-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .project-list-item {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 1rem;
+  /* Fluid label column: shrinks on narrow viewports so the name doesn't
+     dominate the description between 480 and 640px. */
+  grid-template-columns: minmax(120px, 200px) 1fr;
+  gap: var(--space-4);
   align-items: baseline;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
   .project-list-item {
     grid-template-columns: 1fr;
-    gap: 0.25rem;
+    gap: var(--space-1);
   }
 }
 
@@ -984,7 +1001,7 @@ body {
   font-weight: 500;
   color: var(--color-accent);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 .project-list-item__name:hover {
@@ -992,7 +1009,7 @@ body {
 }
 
 .project-list-item__desc {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: var(--leading-normal);
 }
