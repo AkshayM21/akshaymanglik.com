@@ -1,14 +1,10 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
+import { getVisiblePosts } from '@/lib/posts';
 
 export async function GET(context: APIContext) {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-
-  // Sort by date, newest first
-  const sortedPosts = posts.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  // Already date-sorted (newest first); drafts hidden in prod, shown in dev.
+  const sortedPosts = await getVisiblePosts();
 
   return rss({
     title: 'Dereferenced',

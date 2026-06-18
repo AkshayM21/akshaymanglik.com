@@ -18,7 +18,7 @@ Visit at [akshaymanglik.com](https://akshaymanglik.com)
 | Comments | [Remark42](https://remark42.com) (self-hosted) — [custom theme repo](https://github.com/AkshayM21/remark42-dereferenced) |
 | Newsletter | [Kit](https://kit.com) (formerly ConvertKit) |
 | Newsletter Backup | Firebase Firestore (stores subscribers for redundancy) |
-| Hosting | Vercel (hybrid SSR) + Railway (comments) |
+| Hosting | Vercel (`output: 'static'` + auto serverless API routes) + Railway (comments) |
 | OG Images | Playwright (pre-generated static PNGs) |
 
 ## Notable Features
@@ -223,7 +223,7 @@ src/
 │   ├── global/         # Header, Footer, Card
 │   ├── blog/           # PostCard, TOC
 │   ├── mdx/            # Sidenote, Footnote, Callout, Figure
-│   ├── newsletter/     # NewsletterCard, InlineSubscribe
+│   ├── newsletter/     # NewsletterCard
 │   └── comments/       # Remark42
 ├── layouts/            # BaseLayout, BlogLayout
 ├── pages/

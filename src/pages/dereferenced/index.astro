@@ -1,17 +1,13 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/global/Header.astro';
 import Footer from '@/components/global/Footer.astro';
 import Card from '@/components/global/Card.astro';
 import PostCard from '@/components/blog/PostCard.astro';
 import NewsletterCard from '@/components/newsletter/NewsletterCard.astro';
+import { getVisiblePosts } from '@/lib/posts';
 
-const posts = (await getCollection('blog', ({ data }) => {
-  // Show drafts in dev, hide in production
-  return import.meta.env.DEV || !data.draft;
-}))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = await getVisiblePosts();
 ---
 
 <BaseLayout title="Dereferenced — Akshay Manglik" description="Ideas, traced to source." image="/og/dereferenced.png">
@@ -20,6 +16,9 @@ const posts = (await getCollection('blog', ({ data }) => {
       <Card>
         <Header currentPath="/dereferenced" />
         <div class="post-cards">
+          {posts.length === 0 && (
+            <p class="posts-empty">No posts yet — new writing is in the works. Subscribe below to get the first one.</p>
+          )}
           {posts.map((post) => (
             <PostCard
               title={post.data.title}
@@ -36,3 +35,13 @@ const posts = (await getCollection('blog', ({ data }) => {
     </div>
   </div>
 </BaseLayout>
+
+<style>
+  .posts-empty {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+    padding: var(--space-2) 0 var(--space-4);
+  }
+</style>

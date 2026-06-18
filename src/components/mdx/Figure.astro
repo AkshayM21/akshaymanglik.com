@@ -24,10 +24,16 @@ const { src, alt, caption, fullWidth = false } = Astro.props;
     margin-right: calc(-1 * var(--space-6));
   }
 
-  @media (min-width: 1100px) {
+  /* On >=768px the article grid has real gutters; bleed into them using the
+     SAME per-tier tokens the grid uses (--grid-left-gutter / --grid-right-gutter,
+     set on .article-layout and inherited here). Because those tokens are
+     redefined at the medium tier (768-1023px) alongside the grid columns, the
+     figure bleed tracks the grid at every breakpoint and can never diverge or
+     overflow the card. */
+  @media (min-width: 768px) {
     .figure--full {
-      margin-left: calc(-1 * var(--space-12));
-      margin-right: calc(-1 * 280px - var(--space-12));
+      margin-left: calc(-1 * (var(--grid-left-gutter) + var(--article-gap)));
+      margin-right: calc(-1 * (var(--grid-right-gutter) + var(--article-gap)));
     }
   }
 

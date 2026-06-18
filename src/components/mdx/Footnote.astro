@@ -65,8 +65,8 @@ const { id } = Astro.props;
     font-size: var(--text-sm);
     color: var(--color-text-primary);
     line-height: var(--leading-normal);
-    z-index: 100;
-    margin-bottom: 0.5rem;
+    z-index: var(--z-tooltip);
+    margin-bottom: var(--space-2);
   }
 
   .footnote-tooltip::after {

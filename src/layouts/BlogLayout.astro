@@ -31,9 +31,11 @@ const formattedPubDate = pubDate.toLocaleDateString('en-US', {
 });
 
 // Calculate reading time (rough estimate: 200 words per minute)
+// Strip HTML tags first so markup tokens don't inflate the word count.
 const content = await Astro.slots.render('default');
-const wordCount = content.split(/\s+/).length;
-const readingTime = Math.ceil(wordCount / 200);
+const plainText = content.replace(/<[^>]+>/g, ' ');
+const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
 // Filter headings for TOC (h2 and h3 only)
 const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
@@ -108,15 +110,25 @@ const showTOC = tocHeadings.length > 2;
 </BaseLayout>
 
 <script>
+  // Module-scoped handle for the single window scroll listener so repeated
+  // initScrollSpy() calls (e.g. astro:page-load) can remove-before-add instead
+  // of stacking duplicate listeners. Idempotent by construction.
+  let scrollSpyScrollHandler: (() => void) | null = null;
+
   function initScrollSpy() {
     const links = document.querySelectorAll('.toc-sidebar__link');
     const headings = document.querySelectorAll('h2[id], h3[id]');
 
     if (links.length === 0 || headings.length === 0) return;
 
-    // Click handler - immediately highlight clicked link
+    // Click handler - immediately highlight clicked link.
+    // Guard each link with a dataset flag so re-invocation never double-binds
+    // the same element (links may persist across re-init).
     links.forEach(link => {
-      link.addEventListener('click', () => {
+      const el = link as HTMLElement;
+      if (el.dataset.scrollspyBound === 'true') return;
+      el.dataset.scrollspyBound = 'true';
+      el.addEventListener('click', () => {
         links.forEach(l => l.classList.remove('toc-sidebar__link--active'));
         link.classList.add('toc-sidebar__link--active');
       });
@@ -163,9 +175,13 @@ const showTOC = tocHeadings.length > 2;
       }
     }
 
-    // Throttled scroll handler
+    // Throttled scroll handler. Remove any previously-bound handler first so a
+    // re-init replaces (never stacks) the window scroll listener.
     let ticking = false;
-    window.addEventListener('scroll', () => {
+    if (scrollSpyScrollHandler) {
+      window.removeEventListener('scroll', scrollSpyScrollHandler);
+    }
+    scrollSpyScrollHandler = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           updateActiveLink();
@@ -173,7 +189,8 @@ const showTOC = tocHeadings.length > 2;
         });
         ticking = true;
       }
-    });
+    };
+    window.addEventListener('scroll', scrollSpyScrollHandler);
 
     // Initialize on load
     updateActiveLink();
@@ -201,20 +218,40 @@ const showTOC = tocHeadings.length > 2;
 
     gutter.innerHTML = '';
 
-    sidenotes.forEach((sidenote, index) => {
-      const id = (sidenote as HTMLElement).dataset.sidenoteId;
-      const content = sidenote.querySelector('[data-sidenote-content]')?.innerHTML || '';
+    // First pass: create each item at its IDEAL top (aligned to its marker).
+    const GAP = 12; // minimum vertical gap between adjacent gutter notes (px)
+    const items: HTMLDivElement[] = [];
 
-      // Calculate vertical position relative to gutter, with offset to center with superscript line
-      const markerRect = sidenote.getBoundingClientRect();
-      const topOffset = markerRect.top - gutterRect.top - 12;
+    sidenotes.forEach((sidenote, index) => {
+      const content = sidenote.querySelector('[data-sidenote-content]')?.innerHTML || '';
 
       const item = document.createElement('div');
       item.className = 'sidenote-gutter-item';
-      item.style.top = `${topOffset}px`;
       item.innerHTML = `<span class="sidenote-gutter-item__number">${index + 1}.</span> ${content}`;
-
       gutter.appendChild(item);
+
+      // Align the note's FIRST TEXT LINE with the in-text marker's line.
+      // markerRect.top is the top of the marker's (17px body) line box; the gutter
+      // item adds top padding before its 12px text, so we cancel that padding and
+      // apply a small optical nudge so the note's first line sits on the marker's
+      // line rather than floating above it. (Previously a flat -12 over-raised it.)
+      const markerRect = sidenote.getBoundingClientRect();
+      const itemPadTop = parseFloat(getComputedStyle(item).paddingTop) || 0;
+      const OPTICAL_NUDGE = 2; // px down — visually centers 12px note on the marker line
+      const idealTop = markerRect.top - gutterRect.top - itemPadTop + OPTICAL_NUDGE;
+
+      item.dataset.idealTop = String(idealTop);
+      items.push(item);
+    });
+
+    // Second pass: collision avoidance. In document order, push each note down to
+    // max(idealTop, previousBottom + GAP) so adjacent notes never overlap.
+    let prevBottom = -Infinity;
+    items.forEach((item) => {
+      const idealTop = parseFloat(item.dataset.idealTop || '0');
+      const top = Math.max(idealTop, prevBottom + GAP);
+      item.style.top = `${top}px`;
+      prevBottom = top + item.offsetHeight;
     });
   }
 
@@ -273,19 +310,39 @@ const showTOC = tocHeadings.length > 2;
     }
   }
 
+  // Debounced recompute so layout-shifting events don't thrash positioning.
+  let resizeTimeout: ReturnType<typeof setTimeout>;
+  function scheduleSidenotes() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(collectSidenotes, 150);
+  }
+
+  // Observe the article for size changes (images decoding, math/font swaps,
+  // reflow) and recompute sidenote positions when its geometry shifts.
+  let articleObserver: ResizeObserver | null = null;
+  function observeArticle() {
+    if (typeof ResizeObserver === 'undefined') return;
+    const article = document.querySelector('.article-layout');
+    if (!article) return;
+    articleObserver?.disconnect();
+    articleObserver = new ResizeObserver(scheduleSidenotes);
+    articleObserver.observe(article);
+  }
+
   // Initialize on page load - wait for fonts to ensure correct sidenote positioning
   initScrollSpy();
   collectFootnotes();
   document.fonts.ready.then(() => {
     collectSidenotes();
   });
+  observeArticle();
+
+  // Recompute once everything (including images) has loaded, since late image
+  // loads shift the document and move the markers sidenotes anchor to.
+  window.addEventListener('load', scheduleSidenotes);
 
   // Re-initialize on resize (handles mobile/desktop transition)
-  let resizeTimeout: ReturnType<typeof setTimeout>;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(collectSidenotes, 150);
-  });
+  window.addEventListener('resize', scheduleSidenotes);
 
   // Re-initialize on Astro page transitions
   document.addEventListener('astro:page-load', () => {
@@ -294,6 +351,7 @@ const showTOC = tocHeadings.length > 2;
     document.fonts.ready.then(() => {
       collectSidenotes();
     });
+    observeArticle();
   });
 </script>
 
