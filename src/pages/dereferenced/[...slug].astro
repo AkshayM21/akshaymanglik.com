@@ -1,12 +1,12 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogLayout from '@/layouts/BlogLayout.astro';
+import { isVisible } from '@/lib/posts';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => {
-    // Filter out drafts in production
-    return import.meta.env.DEV || !data.draft;
-  });
+  // isVisible hides drafts in production builds (so their pages are never
+  // generated) and shows them in dev for local preview.
+  const posts = await getCollection('blog', isVisible);
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: post,
