@@ -16,6 +16,9 @@ const posts = await getVisiblePosts();
       <Card>
         <Header currentPath="/dereferenced" />
         <div class="post-cards">
+          {posts.length === 0 && (
+            <p class="posts-empty">No posts yet — new writing is in the works. Subscribe below to get the first one.</p>
+          )}
           {posts.map((post) => (
             <PostCard
               title={post.data.title}
@@ -32,3 +35,13 @@ const posts = await getVisiblePosts();
     </div>
   </div>
 </BaseLayout>
+
+<style>
+  .posts-empty {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+    padding: var(--space-2) 0 var(--space-4);
+  }
+</style>
