@@ -32,7 +32,8 @@
   /* Colors — Utility */
   --color-divider: #E5E5E5;
   --color-callout-bg: #FAF8F5;
-  --color-newsletter-bg: #F3F0EB;
+  --color-title-card-bg: #1A1A1A;   /* Ink — bold article title card (white text) */
+  --color-newsletter-bg: #FAF3E4;   /* Cream — newsletter card */
 
   /* Colors — Tags (Status) */
   --tag-live: #16A34A;
@@ -336,10 +337,10 @@ body {
   counter-reset: sidenote-counter footnote-counter;
 }
 
-/* Title Card - styled header for article */
+/* Title Card - styled header for article (ink hero with white text) */
 .title-card {
   grid-column: 2;
-  background: var(--color-newsletter-bg);
+  background: var(--color-title-card-bg);
   border: var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
@@ -347,6 +348,18 @@ body {
   margin-bottom: var(--space-8);
   max-width: 100%;
   overflow-wrap: break-word;
+}
+
+/* White text on the ink title card. Scoped to .title-card so the About
+   page H1 (not inside a title card) keeps its dark text. */
+.title-card .article__meta {
+  color: rgba(255, 255, 255, 0.82);
+}
+.title-card .article__title {
+  color: #ffffff;
+}
+.title-card .article__subtitle {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .article__header {
