@@ -52,6 +52,57 @@ import Card from '@/components/global/Card.astro';
               </a>
             </div>
 
+            <h2>Papers</h2>
+
+            <div class="featured-papers">
+              <!-- Insights Generator -->
+              <div class="paper-card">
+                <div class="paper-card__header">
+                  <a
+                    href="https://arxiv.org/abs/2605.21347"
+                    class="paper-card__title"
+                    target="_blank"
+                    rel="noopener"
+                  >Insights Generator: Systematic Corpus-Level Trace Diagnostics for LLM Agents</a>
+                  <div class="paper-card__badges">
+                    <span class="tag tag--role">Lead author</span>
+                    <span class="tag tag--venue">arXiv 2026 · Scale AI</span>
+                  </div>
+                </div>
+                <p class="paper-card__authors">
+                  <strong>Akshay Manglik</strong>, Apaar Shanker, Kaustubh Deshpande, Jason Qin, Yash Maurya, Veronica Chatrath, Vijay S. Kalmath, Levi Lentz, Yuan Xue
+                </p>
+                <p class="paper-card__desc">A multi-agent system that mines thousands of LLM-agent traces to surface systematic failure modes — human-in-the-loop fixes lifted agent benchmark performance 30%+.</p>
+                <div class="paper-card__links">
+                  <a href="https://arxiv.org/abs/2605.21347" class="paper-card__link" target="_blank" rel="noopener">arXiv ↗</a>
+                  <a href="https://labs.scale.com/blog/insights-generator" class="paper-card__link" target="_blank" rel="noopener">Scale Labs blog ↗</a>
+                </div>
+              </div>
+
+              <!-- Method of loci -->
+              <div class="paper-card">
+                <div class="paper-card__header">
+                  <a
+                    href="https://www.nature.com/articles/s41467-026-71428-6"
+                    class="paper-card__title"
+                    target="_blank"
+                    rel="noopener"
+                  >Binding items to contexts through conjunctive neural representations with the method of loci</a>
+                  <div class="paper-card__badges">
+                    <span class="tag tag--role">Second author</span>
+                    <span class="tag tag--venue">Nature Communications 2026</span>
+                  </div>
+                </div>
+                <p class="paper-card__authors">
+                  Jiawen Huang, <strong>Akshay Manglik</strong>, Nick Dutra, Hannah Tarder-Stoll, Taylor Chamberlain, Robert Ajemian, Qiong Zhang, Kenneth A. Norman, Christopher Baldassano
+                </p>
+                <p class="paper-card__desc">An fMRI study showing how the brain binds items to imagined locations via conjunctive memory representations during method-of-loci training.</p>
+                <div class="paper-card__links">
+                  <a href="https://www.nature.com/articles/s41467-026-71428-6" class="paper-card__link" target="_blank" rel="noopener">Nature ↗</a>
+                </div>
+              </div>
+            </div>
+
             <h2>Projects</h2>
 
             <div class="featured-projects">
@@ -248,6 +299,111 @@ import Card from '@/components/global/Card.astro';
 
   .connect-link:hover {
     color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  /* ------------------------------------------------
+     PAPERS — mirrors the .project-card visual language
+     (see global.css). Scoped here so index.astro stays
+     self-contained; tokens reused verbatim from global.css.
+     ------------------------------------------------ */
+  .featured-papers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .paper-card {
+    background: var(--color-card);
+    border: var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-6);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .paper-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow);
+  }
+
+  .paper-card__header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .paper-card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    line-height: var(--leading-snug);
+  }
+
+  .paper-card__title:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .paper-card__badges {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+
+  /* Reuse the global .tag base (border + radius-sm + sizing); these
+     only set colors, matching how .tag--* variants work in global.css. */
+  .tag--role {
+    background: var(--color-callout-bg);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .tag--venue {
+    background: var(--color-callout-bg);
+    color: var(--color-text-secondary);
+    border-color: var(--color-border);
+  }
+
+  .paper-card__authors {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: var(--leading-normal);
+    margin-bottom: var(--space-2);
+  }
+
+  .paper-card__authors strong {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  .paper-card__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+    margin-bottom: var(--space-3);
+  }
+
+  .paper-card__links {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+
+  .paper-card__link {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .paper-card__link:hover {
     text-decoration: underline;
   }
 
