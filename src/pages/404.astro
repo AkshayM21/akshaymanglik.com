@@ -1,0 +1,149 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/global/Header.astro';
+import Footer from '@/components/global/Footer.astro';
+import Card from '@/components/global/Card.astro';
+
+// Sample path shown in the static markup; the inline script below swaps in the
+// URL the visitor actually requested.
+const samplePath = '/dereferenced/geometry-of-attention';
+---
+
+<BaseLayout
+  title="Page not found — Akshay Manglik"
+  description="That page doesn't exist. It may have moved, been renamed, or never existed."
+  image="/og/index.png"
+>
+  <div class="page">
+    <div class="container">
+      <Card>
+        <Header currentPath="/404" />
+        <article class="article">
+          <header class="article__header">
+            <p class="article__meta">Error 404</p>
+            <h1 class="article__title">Page not found</h1>
+          </header>
+
+          <div class="terminal">
+            <div class="terminal__bar">
+              <span class="terminal__dot"></span>
+              <span class="terminal__dot"></span>
+              <span class="terminal__dot"></span>
+              <span class="terminal__title">zsh: dereferenced</span>
+            </div>
+<pre class="terminal__body"><code><span class="t-prompt">akshay@dereferenced</span><span class="t-sep">:</span><span class="t-path">~</span><span class="t-dollar">$</span>cat <span class="t-arg" id="t-path">{samplePath}</span>
+<span class="t-err">cat: <span id="t-path-err">{samplePath}</span>: No such file or directory</span>
+<span class="t-prompt">akshay@dereferenced</span><span class="t-sep">:</span><span class="t-path">~</span><span class="t-dollar">$</span><span class="t-cursor">▋</span></code></pre>
+          </div>
+
+          <p class="notfound__lede">
+            You dereferenced a link that points to nothing. The page may have moved,
+            been renamed, or never existed. Pick a valid reference below:
+          </p>
+          <div class="notfound__actions">
+            <a href="/dereferenced" class="btn btn--primary">← Back to writing</a>
+            <a href="/" class="btn btn--secondary">About</a>
+          </div>
+        </article>
+        <Footer />
+      </Card>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  // Swap the sample path for the URL the visitor actually hit.
+  (function () {
+    var p = window.location.pathname;
+    if (p && p !== '/') {
+      ['t-path', 't-path-err'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = p;
+      });
+    }
+  })();
+</script>
+
+<style>
+  .terminal {
+    border: var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: var(--space-8) 0;
+    background: var(--color-title-card-bg); /* ink */
+  }
+  .terminal__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: #2a2a2a;
+    border-bottom: var(--border);
+  }
+  .terminal__dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.45);
+  }
+  .terminal__dot:nth-child(1) { background: #ff5f56; }
+  .terminal__dot:nth-child(2) { background: #ffbd2e; }
+  .terminal__dot:nth-child(3) { background: #27c93f; }
+  .terminal__title {
+    margin-left: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .terminal__body {
+    margin: 0;
+    padding: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: rgba(255, 255, 255, 0.9);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .t-prompt { color: #7fd1b9; }
+  .t-sep    { color: rgba(255, 255, 255, 0.45); }
+  .t-path   { color: #6ea8fe; }
+  .t-dollar { color: rgba(255, 255, 255, 0.6); margin: 0 0.4em 0 0.15em; }
+  .t-arg    { color: #ffffff; }
+  .t-err    { color: var(--color-accent); }
+  .t-cursor {
+    color: #ffffff;
+    animation: t-blink 1s steps(1) infinite;
+  }
+  @keyframes t-blink { 50% { opacity: 0; } }
+
+  .notfound__lede {
+    font-size: var(--text-prose);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+  .notfound__actions {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    /* Matches the terminal's bottom margin so terminal->text and
+       text->buttons gaps are visually equal */
+    margin-top: var(--space-8);
+  }
+  /* Buttons carry a shadow at rest, then pop further on hover */
+  .notfound__actions .btn {
+    box-shadow: var(--shadow);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .notfound__actions .btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--color-border);
+  }
+  .notfound__actions .btn:active {
+    transform: translate(0, 0);
+    box-shadow: var(--shadow);
+  }
+</style>

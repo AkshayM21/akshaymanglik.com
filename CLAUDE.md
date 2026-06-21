@@ -124,6 +124,7 @@ Text with a footnote<Footnote id="1">This shows on hover and in the footnotes se
 - `/og/<slug>.png` - Generated OG images for posts
 - `/og/index.png` - OG image for about/home page
 - `/og/dereferenced.png` - OG image for blog index
+- `404` - Custom not-found page (`src/pages/404.astro`, built to `404.html`, served by Vercel on any unmatched route). A terminal-themed page with a `cat`/"No such file or directory" trace; an inline script swaps in the URL the visitor actually requested.
 
 ## OG Image Generation
 
@@ -286,5 +287,6 @@ GitHub Actions workflow (`.github/workflows/test.yml`) runs on push and PR:
 | `src/components/mdx/Footnote.astro` | Footnotes with hover tooltips |
 | `scripts/generate-og-images.ts` | Playwright OG image generator |
 | `src/pages/api/subscribe.ts` | Newsletter subscribe API |
+| `src/pages/404.astro` | Custom terminal-themed 404 page (scoped styles, inline path-injection script) |
 | `vercel.json` | Rewrites, redirects, headers |
 | `.github/workflows/test.yml` | CI/CD test workflow |
